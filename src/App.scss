@@ -1,0 +1,28 @@
+.App {
+	text-align: center;
+}
+
+.header {
+	margin-bottom: 1rem;
+	padding: 2rem 0;
+	background-color: lightblue;
+	color: darkblue;
+	font-size: 1.5rem;
+	font-family: sans-serif;
+	font-weight: 700;
+}
+
+.list-container {
+	background-color: lightcoral;
+	margin: 0 auto;
+	padding: 1rem 0;
+	font-size: 1rem;
+	font-weight: 400;
+	width: 50vw;
+}
+
+.todo {
+	padding: 0.5rem 0;
+	font-size: inherit;
+	color: steelblack;
+}
