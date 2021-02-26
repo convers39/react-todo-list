@@ -3,7 +3,7 @@ import { useDrag, useDrop } from "react-dnd";
 
 const ItemTypes = { TODO: "todo" };
 
-const Todo = ({ id, task, createdAt, onDelete, moveTodo, index }) => {
+const Todo = ({ id, task, created, onDelete, moveTodo, index }) => {
 	// set up toggle finish
 	const [finished, setFinished] = useState(false);
 	const toggleTodo = () => {
@@ -71,7 +71,7 @@ const Todo = ({ id, task, createdAt, onDelete, moveTodo, index }) => {
 				/>
 				<label htmlFor={`finish-check-${id}`}>{task}</label>
 			</div>
-			<div className="todo__created-at">{createdAt}</div>
+			<div className="todo__created-at">{created}</div>
 			<button onClick={() => onDelete(id)}>Delete</button>
 		</div>
 	);

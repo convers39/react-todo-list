@@ -4,13 +4,15 @@ import { firebaseAuth } from "../firebase/config";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-	const [currentUser, setCurrentUser] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [uid, setUid] = useState(null);
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		firebaseAuth.onAuthStateChanged((user) => {
 			if (user) {
-				console.log(user);
-				setCurrentUser(true);
+				console.log(user.uid);
+				setUid(user.uid);
+				setIsLoggedIn(true);
 				setLoading(false);
 			}
 		});
@@ -22,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<div>
-			<AuthContext.Provider value={{ currentUser }}>
+			<AuthContext.Provider value={{ isLoggedIn, uid }}>
 				{children}
 			</AuthContext.Provider>
 		</div>

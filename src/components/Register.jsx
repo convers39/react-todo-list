@@ -3,15 +3,14 @@ import { Redirect } from "react-router-dom";
 import { firebaseAuth } from "../firebase/config";
 
 const Register = () => {
-	const [currentUser, setCurrentUser] = useState(null);
+	const [isLoggedIn, setIsLoggedIn] = useState(null);
 	const singUp = (e) => {
 		e && e.preventDefault();
 		const { email, password } = e.target.elements;
-		console.log(email.value, password.value);
 		firebaseAuth
 			.createUserWithEmailAndPassword(email.value, password.value)
 			.then((data) => {
-				setCurrentUser(true);
+				setIsLoggedIn(true);
 				console.log(data);
 			})
 			.catch((err) => {
@@ -19,7 +18,7 @@ const Register = () => {
 			});
 	};
 
-	if (currentUser) {
+	if (isLoggedIn) {
 		return <Redirect to="/" />;
 	}
 

@@ -1,51 +1,56 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
+import { Redirect } from "react-router-dom";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+import { AuthContext } from "./Auth";
+import { db } from "../firebase/config";
 import Todo from "./Todo";
 import NewTodo from "./NewTodo";
 
-const initial = [
-	{
-		id: 1,
-		task: "todo 1",
-		date: "date and time",
-		createdAt: new Date(2021, 1, 5).toLocaleDateString(),
-		userId: 1,
-		listId: 1,
-	},
-	{
-		id: 2,
-		task: "todo 2",
-		date: "date and time",
-		createdAt: new Date(2021, 1, 10).toLocaleDateString(),
-		userId: 1,
-		listId: 1,
-	},
-	{
-		id: 3,
-		task: "todo 3",
-		date: "date and time",
-		createdAt: new Date(2021, 1, 8).toLocaleDateString(),
-		userId: 1,
-		listId: 1,
-	},
-];
-
 const List = () => {
-	const [todos, setTodos] = useState(initial);
+	const [todos, setTodos] = useState([]);
+	const { isLoggedIn, uid } = useContext(AuthContext);
+	useEffect(() => {
+		db.ref(`all_lists/${uid}/coding`).on("value", (snapshot) => {
+			let allTodos = [];
+			snapshot.forEach((snap) => {
+				allTodos.push(snap.val());
+			});
+			console.log(allTodos);
+			setTodos([...allTodos]);
+		});
+		// return () => {
+		// 	cleanup;
+		// };
+	}, []);
 
-	const onDelete = (id) => {
-		setTodos(todos.filter((todo) => todo.id !== id));
+	const onDelete = (todoId) => {
+		db.ref(`all_lists/${uid}/coding/${todoId}`)
+			.remove()
+			.then((res) => {
+				console.log("removed", res);
+			})
+			.catch(console.error);
+		setTodos(todos.filter((todo) => todo.id !== todoId));
 	};
 
 	const addTask = (task) => {
 		const newTodo = {
-			id: Math.floor(Math.random() * Math.floor(500)),
+			id: `todo_${Date.now()}`,
 			task: task,
-			createdAt: new Date().toLocaleDateString(),
-			userId: 1,
-			listId: 1,
+			created: new Date().toLocaleDateString(),
+			date: new Date().toLocaleDateString(),
 		};
-
-		setTodos([newTodo, ...todos]);
+		//
+		db.ref(`all_lists/${uid}/coding/${newTodo.id}`)
+			.push({
+				...newTodo,
+			})
+			.then(() => {
+				setTodos([newTodo, ...todos]);
+			})
+			.catch(console.error);
 	};
 
 	const moveTodo = useCallback(
@@ -66,7 +71,7 @@ const List = () => {
 				id={todo.id}
 				index={index}
 				task={todo.task}
-				createdAt={todo.createdAt}
+				created={todo.created}
 				onDelete={onDelete}
 				moveTodo={moveTodo}
 			/>
@@ -78,11 +83,15 @@ const List = () => {
 		const copy = todos;
 		copy.sort((a, b) => {
 			return sorting == "ASC"
-				? Date.parse(a.createdAt) - Date.parse(b.createdAt)
-				: Date.parse(b.createdAt) - Date.parse(a.createdAt);
+				? Date.parse(a.created) - Date.parse(b.created)
+				: Date.parse(b.created) - Date.parse(a.created);
 		});
 		setTodos([...copy]);
 	};
+
+	if (!isLoggedIn) {
+		return <Redirect to="/login" />;
+	}
 
 	return (
 		<>
@@ -93,13 +102,15 @@ const List = () => {
 			<button onClick={() => sortByCreatedAt("ASC")}>
 				Sort By CreatedAt
 			</button>
-			<div className="list-container">
-				{!!todos.length ? (
-					todos.map((todo, index) => renderTodo(todo, index))
-				) : (
-					<h2>No tasks</h2>
-				)}
-			</div>
+			<DndProvider backend={HTML5Backend}>
+				<div className="list-container">
+					{!!todos.length ? (
+						todos.map((todo, index) => renderTodo(todo, index))
+					) : (
+						<h2>No tasks</h2>
+					)}
+				</div>
+			</DndProvider>
 		</>
 	);
 };
