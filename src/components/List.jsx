@@ -7,7 +7,7 @@ const initial = [
 		id: 1,
 		task: "todo 1",
 		date: "date and time",
-		createdAt: "112233",
+		createdAt: new Date(2021, 1, 5).toLocaleDateString(),
 		userId: 1,
 		listId: 1,
 	},
@@ -15,7 +15,7 @@ const initial = [
 		id: 2,
 		task: "todo 2",
 		date: "date and time",
-		createdAt: "new Date()",
+		createdAt: new Date(2021, 1, 10).toLocaleDateString(),
 		userId: 1,
 		listId: 1,
 	},
@@ -23,7 +23,7 @@ const initial = [
 		id: 3,
 		task: "todo 3",
 		date: "date and time",
-		createdAt: "new Date()",
+		createdAt: new Date(2021, 1, 8).toLocaleDateString(),
 		userId: 1,
 		listId: 1,
 	},
@@ -40,12 +40,12 @@ const List = () => {
 		const newTodo = {
 			id: Math.floor(Math.random() * Math.floor(500)),
 			task: task,
-			createdAt: "new Date()",
+			createdAt: new Date().toLocaleDateString(),
 			userId: 1,
 			listId: 1,
 		};
 
-		setTodos([...todos, newTodo]);
+		setTodos([newTodo, ...todos]);
 	};
 
 	const moveTodo = useCallback(
@@ -73,9 +73,26 @@ const List = () => {
 		);
 	};
 
+	// sort by latest
+	const sortByCreatedAt = (sorting) => {
+		const copy = todos;
+		copy.sort((a, b) => {
+			return sorting == "ASC"
+				? Date.parse(a.createdAt) - Date.parse(b.createdAt)
+				: Date.parse(b.createdAt) - Date.parse(a.createdAt);
+		});
+		setTodos([...copy]);
+	};
+
 	return (
 		<>
 			<NewTodo addTask={addTask} />
+			<button onClick={() => sortByCreatedAt("DEC")}>
+				Sort By Latest
+			</button>
+			<button onClick={() => sortByCreatedAt("ASC")}>
+				Sort By CreatedAt
+			</button>
 			<div className="list-container">
 				{!!todos.length ? (
 					todos.map((todo, index) => renderTodo(todo, index))

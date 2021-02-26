@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Todo from "./Todo";
+// import Todo from "./Todo";
 
 const NewTodo = ({ addTask }) => {
 	const [task, setTask] = useState("");

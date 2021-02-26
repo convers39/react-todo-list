@@ -26,7 +26,7 @@
 }
 
 .todo {
-	background-color: lightgrey;
+	background-color: #eee;
 	padding: 0.5rem 0;
 	font-size: inherit;
 	width: 80%;
@@ -42,6 +42,13 @@
 
 	label:hover {
 		cursor: pointer;
+	}
+	&__finish-check {
+		visibility: hidden;
+		&:checked + label {
+			text-decoration: line-through;
+			background-color: lightgrey;
+		}
 	}
 }
 
@@ -65,9 +72,12 @@
 	}
 }
 
-.finish-check {
-	visibility: hidden;
-	&:checked + label {
-		text-decoration: line-through;
-	}
+.register {
+	margin: 2rem auto;
+	padding: 0.5rem 0;
+}
+
+.login {
+	margin: 2rem auto;
+	padding: 0.5rem 0;
 }

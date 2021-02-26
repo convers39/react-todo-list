@@ -51,26 +51,27 @@ const Todo = ({ id, task, createdAt, onDelete, moveTodo, index }) => {
 		}),
 	});
 	const opacity = isDragging ? 0 : 1;
+
 	drag(drop(ref));
 	return (
 		<div
 			className="todo"
-			// draggable="true"
 			style={{ opacity }}
 			ref={ref}
 			data-handler-id={handlerId}
+			// onDragStart={(e) => (e.target.style.cursor = "grabbing")}
 		>
 			<div>
 				<input
-					className="finish-check"
+					className="todo__finish-check"
 					id={`finish-check-${id}`}
 					type="checkbox"
 					onChange={toggleTodo}
 					checked={finished}
 				/>
 				<label htmlFor={`finish-check-${id}`}>{task}</label>
-				{/* <span>{createdAt}</span> */}
 			</div>
+			<div className="todo__created-at">{createdAt}</div>
 			<button onClick={() => onDelete(id)}>Delete</button>
 		</div>
 	);
