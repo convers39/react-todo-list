@@ -1,20 +1,24 @@
 import React, { useState } from "react";
-// import Todo from "./Todo";
 
-const NewTodo = ({ addTask }) => {
+const NewTodo = ({ addTodo }) => {
 	const [task, setTask] = useState("");
+	const [listName, setListName] = useState("");
 
-	const onChange = (e) => {
+	const onTask = (e) => {
 		setTask(e.target.value);
+	};
+
+	const onList = (e) => {
+		setListName(e.target.value);
 	};
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		if (!task) {
-			alert("Please add text");
+		if (!task || !listName) {
+			alert("task and list name are required");
 			return;
 		}
-		addTask(task);
+		addTodo(task, listName);
 	};
 
 	return (
@@ -25,10 +29,17 @@ const NewTodo = ({ addTask }) => {
 					id="new-task__content"
 					className="new-task__content"
 					type="text"
-					onChange={onChange}
+					onChange={onTask}
 					value={task}
 				/>
-
+				<label htmlFor="new-task__list-name">Add to list: </label>
+				<input
+					id="new-task__list-name"
+					className="new-task__list-name"
+					type="text"
+					onChange={onList}
+					value={listName}
+				/>
 				<button className="new-task__btn">Add</button>
 			</form>
 		</div>

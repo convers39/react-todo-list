@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { firebaseAuth } from "../firebase/config";
+import Button from "@material-ui/core/Button";
 
 const Register = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -30,7 +31,9 @@ const Register = () => {
 				<input id="email" type="email" />
 				<label htmlFor="password">Password:</label>
 				<input id="password" type="password" />
-				<button>Sign Up</button>
+				<Button variant="contained" color="primary">
+					Sign Up
+				</Button>
 			</form>
 		</div>
 	);
