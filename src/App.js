@@ -16,7 +16,7 @@ function App() {
 	return (
 		<div className="App">
 			<CssBaseline />
-			<Container maxWidth="sm">
+			<Container maxWidth="md">
 				{/* <Typography
 					component="div"
 					style={{ backgroundColor: "#cfe8fc", height: "100vh" }}

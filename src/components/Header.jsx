@@ -1,19 +1,37 @@
 import React, { useContext } from "react";
-import { Redirect } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { firebaseAuth } from "../firebase/config";
 import { AuthContext } from "./Auth";
+import { Button } from "@material-ui/core";
 
 const Header = () => {
 	const { isLoggedIn } = useContext(AuthContext);
-	if (!isLoggedIn) {
-		return <Redirect to="/login" />;
-	}
+
+	const style = {
+		backgroundColor: "lightcoral",
+		display: "flex",
+		justifyContent: "space-between",
+		alignItems: "center",
+		padding: "0 20px",
+	};
+
 	return (
-		<header className="header">
-			<div>Todo List Shit</div>
-			{isLoggedIn && (
-				<button onClick={() => firebaseAuth.signOut()}>Sign Out</button>
-			)}
+		<header className="header" style={style}>
+			<div>Logo</div>
+			<div>
+				<h1>Todo List</h1>
+			</div>
+			<div>
+				{isLoggedIn ? (
+					<Button onClick={() => firebaseAuth.signOut()}>
+						Log Out
+					</Button>
+				) : (
+					<Button component={RouterLink} to="/login">
+						Log In
+					</Button>
+				)}
+			</div>
 		</header>
 	);
 };
