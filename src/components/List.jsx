@@ -1,6 +1,6 @@
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
-import Button from "@material-ui/core/Button";
+import { Typography } from "@material-ui/core";
 
 import Todo from "./Todo";
 import Sorting from "./Sorting";
@@ -25,12 +25,18 @@ const List = ({ listName, content, sort, onDelete }) => {
 	};
 
 	const style = {
-		// margin: "20px 10px",
+		padding: "1em",
+		backgroundColor: "lightgrey",
+		borderRadius: "5px",
+		margin: "1em 0",
+		width: "400px",
 	};
 
 	return (
 		<div style={style}>
-			<h3 style={{ textAlign: "center" }}>{listName}</h3>
+			<Typography variant="h5" align="center">
+				@{listName}
+			</Typography>
 			<Sorting sort={sort} listName={listName} />
 			<div className="list-container">
 				{
@@ -43,9 +49,10 @@ const List = ({ listName, content, sort, onDelete }) => {
 										{...provided.droppableProps}
 										style={{
 											background: snapshot.isDraggingOver
-												? "lightblue"
-												: "#25d4dd",
-											padding: 4,
+												? "#6a80aa"
+												: "#50658d",
+											padding: ".5em",
+											borderRadius: "5px",
 											// minHeight: 400,
 										}}
 									>

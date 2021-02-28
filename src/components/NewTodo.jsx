@@ -16,11 +16,16 @@ const NewTodo = ({ addTodo }) => {
 			alert("task cannot be empty");
 			return;
 		}
-		let listName = "default";
+		let listName;
 		let taskText = "";
 		if (taskContent.startsWith("@")) {
 			taskText = taskContent.split(" ").slice(1).join(" ");
 			listName = taskContent.split(" ")[0].split("@")[1];
+			if (!taskText) {
+				let temp = listName;
+				listName = "default";
+				taskText = temp;
+			}
 		}
 		let date = e.target.elements[1].value;
 		console.log(date, e.target.elements);
@@ -29,15 +34,16 @@ const NewTodo = ({ addTodo }) => {
 	};
 
 	const style = {
-		padding: "10px 30px",
-		margin: "0 10px",
+		padding: "1em 1em",
+		margin: "0 2em",
 		display: "flex",
+		// flexWrap: "wrap",
 		alignItems: "baseline",
 		justifyContent: "space-between",
 	};
 
 	return (
-		<div className="new-task" style={{ border: "1px solid lightgray" }}>
+		<div className="new-task" style={{ border: "1px solid #3F51B5" }}>
 			<form
 				style={style}
 				noValidate
@@ -47,6 +53,7 @@ const NewTodo = ({ addTodo }) => {
 				<TextField
 					id="standard-basic"
 					label="New Todo"
+					required
 					// fullWidth={true}
 					onChange={onTask}
 					value={task}

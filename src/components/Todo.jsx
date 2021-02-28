@@ -45,11 +45,12 @@ const Todo = ({ id, task, created, date, onDelete, index, listName }) => {
 						{...provided.dragHandleProps}
 						style={{
 							userSelect: "none",
-							padding: 15,
-							margin: "5px",
+							padding: ".4em",
+							margin: ".8em .4em",
+							borderRadius: "5px",
 							backgroundColor: snapshot.isDragging
 								? "#9fc4eee"
-								: "#3ca3bd",
+								: "#8794b8",
 							...provided.draggableProps.style,
 						}}
 					>
@@ -74,6 +75,11 @@ const Todo = ({ id, task, created, date, onDelete, index, listName }) => {
 								id={id}
 								primary={`${task} on ${date}`}
 								secondary={`created at ${created}`}
+								style={{
+									textDecoration: finished
+										? "line-through"
+										: "none",
+								}}
 							/>
 
 							<ListItemSecondaryAction>

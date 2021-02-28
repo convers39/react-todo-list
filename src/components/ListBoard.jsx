@@ -9,6 +9,7 @@ import NewTodo from "./NewTodo";
 const ListBoard = () => {
 	const [lists, setLists] = useState({});
 	const { uid, isLoggedIn } = useContext(AuthContext);
+
 	useEffect(() => {
 		db.ref(`all_lists/${uid}`).on("value", (snapshot) => {
 			let allLists = {};
@@ -23,8 +24,8 @@ const ListBoard = () => {
 		});
 	}, [uid]);
 
+	// mark as deleted and move to deleted list, edge case of empty list
 	const onDelete = async (todoId, listName) => {
-		// TODO: check edge case of empty list
 		let baseUrl = `all_lists/${uid}/${listName}/todos`;
 		let deletedUrl = `all_lists/${uid}/deleted/todos`;
 		const todos = [...lists[listName].todos];
@@ -32,38 +33,41 @@ const ListBoard = () => {
 		if (!deleted) {
 			deleted = [];
 		}
-		console.log("deleted", deleted);
 		let removed;
 		for (let index = 0; index < todos.length; index++) {
 			const todo = todos[index];
 			if (todo.id === todoId) {
 				todo.deleted = 1;
 				removed = todos.splice(index, 1);
-				deleted.push(removed);
+				deleted.push(removed[0]);
 			}
 		}
+
 		await db.ref(`${baseUrl}`).set(todos).catch(console.error);
-		await db
-			.ref(`${deletedUrl}`)
-			.set(...deleted)
-			.catch(console.error);
-		setLists({
-			...lists,
-			deleted: {
-				name: "deleted",
-				todos: deleted,
-			},
-			[listName]: {
-				name: listName,
-				todos: todos,
-			},
-		});
+		await db.ref(`${deletedUrl}`).set(deleted).catch(console.error);
+
+		let copy = {};
+		for (const [k, v] of Object.entries(lists)) {
+			if (k !== listName) copy[k] = v;
+		}
+
+		const allLists =
+			todos && todos.length
+				? {
+						...lists,
+						[listName]: {
+							name: listName,
+							todos: todos,
+						},
+				  }
+				: { ...copy };
+		setLists(allLists);
 	};
 
 	// add new todo
 	const addTodo = (task, listName, date) => {
 		let baseUrl = `all_lists/${uid}/${listName}`;
-		// check @list group
+
 		const newTodo = {
 			id: `todo_${Date.now()}`,
 			task: task,
@@ -73,7 +77,7 @@ const ListBoard = () => {
 			deleted: false,
 		};
 		const todos = lists[listName] ? lists[listName].todos : [];
-		const newList = { name: listName, [listName]: [newTodo, ...todos] };
+		const newList = { name: listName, todos: [newTodo, ...todos] };
 
 		db.ref(`${baseUrl}`)
 			.set(newList)
@@ -81,10 +85,7 @@ const ListBoard = () => {
 				console.log("add new", data);
 				setLists({
 					...lists,
-					[listName]: {
-						name: listName,
-						todos: newList,
-					},
+					[listName]: newList,
 				});
 			})
 			.catch(console.error);
@@ -94,15 +95,17 @@ const ListBoard = () => {
 	const sort = (sorting, listName) => {
 		let baseUrl = `all_lists/${uid}/${listName}/todos`;
 		const copy = [...lists[listName].todos];
+
 		copy.sort((a, b) => {
 			return sorting == "ASC"
 				? Date.parse(a.created) - Date.parse(b.created)
 				: Date.parse(b.created) - Date.parse(a.created);
 		});
+		console.log(copy);
 		db.ref(`${baseUrl}`)
 			.set(copy)
-			.then(() => {
-				console.log("sorting done");
+			.then((data) => {
+				console.log("sorting done at", baseUrl, data);
 				setLists({
 					...lists,
 					[listName]: {
@@ -167,10 +170,13 @@ const ListBoard = () => {
 
 	const style = {
 		display: "flex",
+		flexWrap: "wrap",
 		justifyContent: "space-around",
-		border: "1px solid lightgrey",
+		backgroundColor: "#eee",
+		border: "1px solid #3F51B5",
 		height: "100%",
-		padding: "2em 0",
+		padding: "2em",
+		marginBottom: "3em",
 	};
 
 	if (!isLoggedIn) {

@@ -1,33 +1,27 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
+import { Typography, Button, ButtonGroup } from "@material-ui/core";
+import SortIcon from "@material-ui/icons/Sort";
 
 const Sorting = ({ sort, listName }) => {
 	const style = {
 		display: "flex",
 		justifyContent: "space-around",
 		alignItems: "center",
-		marginBottom: "10px",
+		margin: "0.5em 0",
 	};
 
 	return (
 		<div style={style}>
-			<div>Sort:</div>
-			<div>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => sort("ASC", listName)}
-				>
-					By Created
+			{/* <Typography variant="h5" align="center">
+				{listName}
+			</Typography> */}
+			<SortIcon />
+			<ButtonGroup variant="contained" color="primary">
+				<Button onClick={() => sort("ASC", listName)}>
+					by created
 				</Button>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => sort("DEC", listName)}
-				>
-					by latest
-				</Button>
-			</div>
+				<Button onClick={() => sort("DEC", listName)}>by latest</Button>
+			</ButtonGroup>
 		</div>
 	);
 };
