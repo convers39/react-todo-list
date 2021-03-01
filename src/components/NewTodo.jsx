@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import { Button, TextField } from "@material-ui/core";
 
 const NewTodo = ({ addTodo }) => {
 	const [task, setTask] = useState("");
@@ -16,6 +15,7 @@ const NewTodo = ({ addTodo }) => {
 			alert("task cannot be empty");
 			return;
 		}
+		// check @ mark
 		let listName;
 		let taskText = "";
 		if (taskContent.startsWith("@")) {
@@ -28,9 +28,20 @@ const NewTodo = ({ addTodo }) => {
 			}
 		}
 		let date = e.target.elements[1].value;
-		console.log(date, e.target.elements);
+		// add tags
+		let tags = [];
+		if (taskText.includes("#")) {
+			const re = /^#\w+$/;
+			tags = taskText.split(" ").filter((w) => w.match(re));
+			tags = tags.map((tag) => tag.replace("#", ""));
+			taskText = taskText
+				.split(" ")
+				.filter((w) => !w.startsWith("#"))
+				.join(" ");
+		}
+		console.log(date, tags, taskText, listName);
 		setTask("");
-		addTodo(taskText, listName, date);
+		addTodo(taskText, listName, date, tags);
 	};
 
 	const style = {

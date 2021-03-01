@@ -1,15 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import {
+	Checkbox,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	ListItemSecondaryAction,
+	IconButton,
+} from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 import { db } from "../firebase/config";
 import { AuthContext } from "./Auth";
-
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 const Todo = ({ id, task, created, date, onDelete, index, listName }) => {
 	// set up toggle finish

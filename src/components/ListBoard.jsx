@@ -5,10 +5,77 @@ import { AuthContext } from "./Auth";
 import { db } from "../firebase/config";
 import List from "./List";
 import NewTodo from "./NewTodo";
+import Tags from "./Tags";
 
 const ListBoard = () => {
 	const [lists, setLists] = useState({});
+	const [initials, setInitials] = useState({});
+	const [tags, setTags] = useState({});
 	const { uid, isLoggedIn } = useContext(AuthContext);
+
+	useEffect(() => {
+		const tagsUrl = `all_lists/${uid}/tags`;
+		db.ref(tagsUrl)
+			.get()
+			.then((tags = {}) => {
+				console.log("tags", tags.val());
+				setTags(tags.val());
+			});
+	}, [uid]);
+
+	const filterTag = (tagList) => {
+		if (!tagList.length) {
+			setLists(initials);
+			return;
+		}
+
+		let newList = {};
+		let copy = initials;
+		console.log("initial copy", copy);
+		// check each todo tags contains all tags in tagList
+		const checkSubArray = (arr, sub) => sub.every((v) => arr.includes(v));
+		// loop over all todo list
+		for (const list in copy) {
+			console.log("before", list, newList);
+			newList[list] = { name: list, todos: [] };
+			newList[list].todos = copy[list].todos.filter((todo) => {
+				if (todo.hasOwnProperty("tags")) {
+					return checkSubArray(todo.tags, tagList);
+				}
+				return false;
+			});
+			console.log("after", newList);
+		}
+		console.log("filtered", newList);
+		setLists(newList);
+		// check if include all tags in taglist
+
+		// for (const tag of tagList) {
+		// 	if (Object.keys(tags).includes(tag)) {
+		// 		let target = tags[tag];
+		// 		for (const [listName, todoId] of Object.entries(target)) {
+		// 			for (const key in initials) {
+		// 				console.log(
+		// 					"target list name",
+		// 					target,
+		// 					"list key",
+		// 					key,
+		// 				);
+		// 				if (key === listName) {
+		// 					newList[key] = {
+		// 						name: key,
+		// 						todos: initials[key].todos.filter(
+		// 							(todo) => todo.id === todoId,
+		// 						),
+		// 					};
+		// 					console.log("check newlist", newList);
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// console.log("filter list", newList);
+	};
 
 	useEffect(() => {
 		db.ref(`all_lists/${uid}`).on("value", (snapshot) => {
@@ -16,10 +83,11 @@ const ListBoard = () => {
 			console.log("list board use effect");
 			snapshot.forEach((snap) => {
 				const { name, todos } = snap.val();
-				if (todos && name !== "deleted") {
+				if (todos && name !== "deleted" && "tags") {
 					allLists[snap.val().name] = snap.val();
 				}
 				setLists({ ...allLists });
+				setInitials({ ...allLists });
 			});
 		});
 	}, [uid]);
@@ -43,8 +111,8 @@ const ListBoard = () => {
 			}
 		}
 
-		await db.ref(`${baseUrl}`).set(todos).catch(console.error);
-		await db.ref(`${deletedUrl}`).set(deleted).catch(console.error);
+		db.ref(`${baseUrl}`).set(todos).catch(console.error);
+		db.ref(`${deletedUrl}`).set(deleted).catch(console.error);
 
 		let copy = {};
 		for (const [k, v] of Object.entries(lists)) {
@@ -65,7 +133,7 @@ const ListBoard = () => {
 	};
 
 	// add new todo
-	const addTodo = (task, listName, date) => {
+	const addTodo = (task, listName, date, tags = []) => {
 		let baseUrl = `all_lists/${uid}/${listName}`;
 
 		const newTodo = {
@@ -75,14 +143,15 @@ const ListBoard = () => {
 			date: date,
 			finished: false,
 			deleted: false,
+			tags: tags,
 		};
-		const todos = lists[listName] ? lists[listName].todos : [];
+		let todos = lists[listName] ? lists[listName].todos : [];
+		todos = todos.filter(Boolean);
 		const newList = { name: listName, todos: [newTodo, ...todos] };
 
 		db.ref(`${baseUrl}`)
 			.set(newList)
-			.then((data) => {
-				console.log("add new", data);
+			.then(() => {
 				setLists({
 					...lists,
 					[listName]: newList,
@@ -118,7 +187,7 @@ const ListBoard = () => {
 	};
 
 	// drag end
-	const onDragEnd = async (result, lists, setLists) => {
+	const onDragEnd = (result, lists, setLists) => {
 		if (!result.destination) return;
 		const { source, destination } = result;
 		const sourceListName = source.droppableId;
@@ -132,13 +201,8 @@ const ListBoard = () => {
 			const [removed] = sourceItems.splice(source.index, 1);
 			destItems.splice(destination.index, 0, removed);
 
-			await db
-				.ref(`all_lists/${uid}/${sourceListName}/todos`)
-				.set(sourceItems);
-			await db
-				.ref(`all_lists/${uid}/${destListName}/todos`)
-				.set(destItems);
-
+			db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(sourceItems);
+			db.ref(`all_lists/${uid}/${destListName}/todos`).set(destItems);
 			setLists({
 				...lists,
 				[sourceListName]: {
@@ -155,9 +219,7 @@ const ListBoard = () => {
 			sourceItems.splice(destination.index, 0, removed);
 			console.log("onDragEnd", sourceList, sourceItems);
 
-			await db
-				.ref(`all_lists/${uid}/${sourceListName}/todos`)
-				.set(sourceItems);
+			db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(sourceItems);
 			setLists({
 				...lists,
 				[sourceListName]: {
@@ -186,23 +248,32 @@ const ListBoard = () => {
 	return (
 		<div>
 			<NewTodo addTodo={addTodo} />
+			<Tags filterTag={filterTag} />
 			<div className="list-board" style={style}>
-				<DragDropContext
-					onDragEnd={(result) => onDragEnd(result, lists, setLists)}
-				>
-					{Object.entries(lists).map(([listName, list], index) => {
-						return (
-							<List
-								listName={listName}
-								key={listName}
-								content={list.todos}
-								onDelete={onDelete}
-								addTodo={addTodo}
-								sort={sort}
-							/>
-						);
-					})}
-				</DragDropContext>
+				{Object.keys(lists).length ? (
+					<DragDropContext
+						onDragEnd={(result) =>
+							onDragEnd(result, lists, setLists)
+						}
+					>
+						{Object.entries(lists).map(
+							([listName, list], index) => {
+								return (
+									<List
+										listName={listName}
+										key={listName}
+										content={list.todos}
+										onDelete={onDelete}
+										addTodo={addTodo}
+										sort={sort}
+									/>
+								);
+							},
+						)}
+					</DragDropContext>
+				) : (
+					<h2> No Results</h2>
+				)}
 			</div>
 		</div>
 	);

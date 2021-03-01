@@ -39,35 +39,35 @@ const List = ({ listName, content, sort, onDelete }) => {
 			</Typography>
 			<Sorting sort={sort} listName={listName} />
 			<div className="list-container">
-				{
+				{!!todos.length ? (
 					<Droppable droppableId={listName}>
-						{!!todos.length ? (
-							(provided, snapshot) => {
-								return (
-									<div
-										ref={provided.innerRef}
-										{...provided.droppableProps}
-										style={{
-											background: snapshot.isDraggingOver
-												? "#6a80aa"
-												: "#50658d",
-											padding: ".5em",
-											borderRadius: "5px",
-											// minHeight: 400,
-										}}
-									>
-										{todos.map((todo, index) =>
-											renderTodo(todo, index),
-										)}
-										{provided.placeholder}
-									</div>
-								);
-							}
-						) : (
-							<h2>No todos</h2>
-						)}
+						{(provided, snapshot) => {
+							return (
+								<div
+									ref={provided.innerRef}
+									{...provided.droppableProps}
+									style={{
+										background: snapshot.isDraggingOver
+											? "#6a80aa"
+											: "#50658d",
+										padding: ".5em",
+										borderRadius: "5px",
+										// minHeight: 400,
+									}}
+								>
+									{todos.map((todo, index) =>
+										renderTodo(todo, index),
+									)}
+									{provided.placeholder}
+								</div>
+							);
+						}}
 					</Droppable>
-				}
+				) : (
+					<Typography variant="h4" align="center">
+						No todos
+					</Typography>
+				)}
 			</div>
 		</div>
 	);
