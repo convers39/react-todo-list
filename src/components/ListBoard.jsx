@@ -267,6 +267,20 @@ const ListBoard = () => {
 		}
 	};
 
+	// render todo list
+	const renderList = (listName, todos) => {
+		return (
+			<List
+				listName={listName}
+				key={listName}
+				todos={todos}
+				onDelete={onDelete}
+				addTodo={addTodo}
+				sort={sort}
+			/>
+		);
+	};
+
 	const style = {
 		display: "flex",
 		flexWrap: "wrap",
@@ -289,19 +303,8 @@ const ListBoard = () => {
 							onDragEnd(result, lists, setLists)
 						}
 					>
-						{Object.entries(lists).map(
-							([listName, list], index) => {
-								return (
-									<List
-										listName={listName}
-										key={listName}
-										todos={list.todos}
-										onDelete={onDelete}
-										addTodo={addTodo}
-										sort={sort}
-									/>
-								);
-							},
+						{Object.entries(lists).map(([listName, list], index) =>
+							renderList(listName, list.todos),
 						)}
 					</DragDropContext>
 				) : (
