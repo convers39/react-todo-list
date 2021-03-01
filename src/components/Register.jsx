@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Redirect, Link as RouterLink } from "react-router-dom";
-import { firebaseAuth } from "../firebase/config";
 import {
 	TextField,
 	Card,
@@ -10,6 +9,9 @@ import {
 	Button,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+
+import { firebaseAuth } from "../firebase/config";
+import { AuthContext } from "./Auth";
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -40,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Register = () => {
-	const [isLoggedIn, setIsLoggedIn] = useState(null);
+	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
 	const classes = useStyles();
 	const signUp = (e) => {
 		e && e.preventDefault();
@@ -51,9 +53,7 @@ const Register = () => {
 				setIsLoggedIn(true);
 				console.log(data);
 			})
-			.catch((err) => {
-				console.log(err);
-			});
+			.catch(console.error);
 	};
 
 	if (isLoggedIn) {
@@ -95,16 +95,16 @@ const Register = () => {
 						<Button
 							variant="contained"
 							size="large"
-							color="secondary"
+							color="primary"
 							type="submit"
 							// disabled={state.isButtonDisabled}
 						>
 							Sign up
 						</Button>
 						<Button
-							variant="contained"
+							variant="outlined"
 							size="large"
-							color="secondary"
+							color="primary "
 							component={RouterLink}
 							to="/login"
 							// disabled={state.isButtonDisabled}

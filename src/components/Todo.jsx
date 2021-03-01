@@ -13,7 +13,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { db } from "../firebase/config";
 import { AuthContext } from "./Auth";
 
-const Todo = ({ id, task, created, date, onDelete, index, listName }) => {
+const Todo = ({ todo, onDelete, index, listName }) => {
+	let { id, task, created, date } = todo;
 	// set up toggle finish
 	const { uid } = useContext(AuthContext);
 	const baseUrl = `all_lists/${uid}/${listName}/todos/${index}`;
@@ -78,6 +79,7 @@ const Todo = ({ id, task, created, date, onDelete, index, listName }) => {
 								primary={`${task} on ${date}`}
 								secondary={`created at ${created}`}
 								style={{
+									// textTransform: "capitalize",
 									textDecoration: finished
 										? "line-through"
 										: "none",

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Button, ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import SortIcon from "@material-ui/icons/Sort";
 
 const Sorting = ({ sort, listName }) => {
@@ -12,9 +12,6 @@ const Sorting = ({ sort, listName }) => {
 
 	return (
 		<div style={style}>
-			{/* <Typography variant="h5" align="center">
-				{listName}
-			</Typography> */}
 			<SortIcon />
 			<ButtonGroup variant="contained" color="primary">
 				<Button onClick={() => sort("ASC", listName)}>

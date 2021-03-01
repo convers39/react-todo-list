@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) =>
 		card: {
 			marginTop: theme.spacing(10),
 		},
+		input: {
+			padding: "0 1em",
+		},
 		actions: {
 			display: "block",
 			textAlign: "center",
@@ -96,16 +99,16 @@ const Login = () => {
 						<Button
 							variant="contained"
 							size="large"
-							color="secondary"
+							color="primary"
 							type="submit"
 							// disabled={state.isButtonDisabled}
 						>
 							Log in
 						</Button>
 						<Button
-							variant="contained"
+							variant="outlined"
 							size="large"
-							color="secondary"
+							color="primary"
 							component={RouterLink}
 							to="/register"
 							// disabled={state.isButtonDisabled}

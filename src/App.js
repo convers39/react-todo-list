@@ -1,8 +1,5 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { DragDropContext } from "react-beautiful-dnd";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
+import { CssBaseline, Container } from "@material-ui/core";
 
 import "./App.scss";
 import ListBoard from "./components/ListBoard";

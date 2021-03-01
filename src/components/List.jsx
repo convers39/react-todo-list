@@ -5,21 +5,15 @@ import { Typography } from "@material-ui/core";
 import Todo from "./Todo";
 import Sorting from "./Sorting";
 
-const List = ({ listName, content, sort, onDelete }) => {
-	const todos = content;
-
+const List = ({ listName, todos, sort, onDelete }) => {
 	const renderTodo = (todo, index) => {
 		return (
 			<Todo
 				key={todo.id}
-				id={todo.id}
 				index={index}
-				task={todo.task}
-				date={todo.date}
-				created={todo.created}
+				todo={todo}
 				onDelete={onDelete}
 				listName={listName}
-				// moveTodo={moveTodo}
 			/>
 		);
 	};
@@ -39,7 +33,7 @@ const List = ({ listName, content, sort, onDelete }) => {
 			</Typography>
 			<Sorting sort={sort} listName={listName} />
 			<div className="list-container">
-				{!!todos.length ? (
+				{todos.length ? (
 					<Droppable droppableId={listName}>
 						{(provided, snapshot) => {
 							return (

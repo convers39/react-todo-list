@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Button, ButtonGroup, TextField } from "@material-ui/core";
-import { db } from "../firebase/config";
-import { AuthContext } from "./Auth";
+import React, { useState, useEffect } from "react";
+// import { Link as RouterLink } from "react-router-dom";
+import { Button, TextField } from "@material-ui/core";
+// import ClearIcon from "@material-ui/icons/Clear";
 
 const Tags = ({ filterTag }) => {
-	const { uid } = useContext(AuthContext);
 	const [tagList, setTagList] = useState([]);
 
 	useEffect(() => {
-		console.log("in tags", tagList);
 		filterTag(tagList);
 	}, [tagList.length]);
 
@@ -18,7 +15,6 @@ const Tags = ({ filterTag }) => {
 		if (e.key === "Enter" && tag) {
 			e.target.value = "";
 			setTagList([...tagList, tag]);
-			// filterTag(tagList);
 		}
 	};
 
@@ -30,35 +26,22 @@ const Tags = ({ filterTag }) => {
 	const resetFilter = () => {
 		setTagList([]);
 	};
-	// const baseUrl = `all_lists/${uid}/tags`;
-
-	// useEffect(() => {
-	// 	db.ref(baseUrl)
-	// 		.get()
-	// 		.then((tags = []) => {
-	// 			console.log("tags", tags.val());
-	// 			setTags(Object.keys(tags.val()));
-	// 		});
-	// }, [baseUrl]);
-	// tags = [tag1:{listName:todoId, listName:todoId }, tag2:{}]
-	// Object.entries(tags[0]) => key value
-	// url = `all_lists/${uid}/${listName}
-	//
 
 	const style = {
 		backgroundColor: "#eee",
-		padding: ".8em",
+		padding: "1.5em 3em",
 		margin: ".5em auto",
 	};
+
 	return (
 		<div style={style}>
 			<TextField
 				onKeyDown={pushToTagList}
 				id="standard-full-width"
 				label="Tag Filter"
-				style={{ margin: ".2em auto" }}
-				placeholder="Enter tag name and press enter"
-				// helperText="Full width!"
+				style={{ margin: ".5em auto" }}
+				placeholder="Press enter to input a tag, click tag to remove"
+				// helperText={tagList.length ? "Click tag to remove" : ""}
 				fullWidth
 				margin="normal"
 				InputLabelProps={{
@@ -67,8 +50,11 @@ const Tags = ({ filterTag }) => {
 			/>
 			<div style={{ display: "flex", alignItems: "center" }}>
 				<Button
-					variant="contained"
+					variant="outlined"
+					color="secondary"
 					onClick={resetFilter}
+					disabled={!tagList.length}
+					disableElevation
 					style={{ marginRight: ".5em" }}
 				>
 					Reset
@@ -81,11 +67,11 @@ const Tags = ({ filterTag }) => {
 							key={tag}
 							style={{ margin: "0 .5em" }}
 						>
-							{tag}
+							#{tag}
 						</Button>
 					))
 				) : (
-					<p>No tags</p>
+					<p style={{ margin: "0 .5em" }}>No tags</p>
 				)}
 			</div>
 		</div>

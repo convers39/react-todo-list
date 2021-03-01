@@ -3,31 +3,40 @@ import { Button, TextField } from "@material-ui/core";
 
 const NewTodo = ({ addTodo }) => {
 	const [task, setTask] = useState("");
+	const [error, setError] = useState(false);
 
 	const onTask = (e) => {
-		setTask(e.target.value);
+		const task = e.target.value;
+		if (task) {
+			setError(false);
+		}
+		setTask(task);
 	};
 
 	const onSubmit = (e) => {
 		e.preventDefault();
 		let taskContent = task.trim();
 		if (!taskContent) {
-			alert("task cannot be empty");
+			setError(true);
 			return;
 		}
-		// check @ mark
+
+		// check @ mark and list name
 		let listName;
 		let taskText = "";
 		if (taskContent.startsWith("@")) {
 			taskText = taskContent.split(" ").slice(1).join(" ");
 			listName = taskContent.split(" ")[0].split("@")[1];
+			// if task text is empty, set @mark content to task, and list name to default
 			if (!taskText) {
+				// or just set error?
 				let temp = listName;
 				listName = "default";
 				taskText = temp;
 			}
 		}
 		let date = e.target.elements[1].value;
+
 		// add tags
 		let tags = [];
 		if (taskText.includes("#")) {
@@ -39,7 +48,7 @@ const NewTodo = ({ addTodo }) => {
 				.filter((w) => !w.startsWith("#"))
 				.join(" ");
 		}
-		console.log(date, tags, taskText, listName);
+
 		setTask("");
 		addTodo(taskText, listName, date, tags);
 	};
@@ -65,9 +74,10 @@ const NewTodo = ({ addTodo }) => {
 					id="standard-basic"
 					label="New Todo"
 					required
-					// fullWidth={true}
 					onChange={onTask}
 					value={task}
+					error={error}
+					helperText={error ? "Use space between each words" : ""}
 					style={{ width: "50%" }}
 					placeholder="e.g. '@list task' to create or add to a list"
 				/>
@@ -75,9 +85,7 @@ const NewTodo = ({ addTodo }) => {
 					id="datetime-local"
 					label="Set Date"
 					type="date"
-					// defaultValue={new Date()
-					// 	.toLocaleDateString()
-					// 	.replaceAll("/", "-")}
+					defaultValue={new Date().toLocaleDateString("en-CA")}
 					InputLabelProps={{
 						shrink: true,
 					}}
@@ -86,6 +94,7 @@ const NewTodo = ({ addTodo }) => {
 					variant="outlined"
 					color="primary"
 					type="submit"
+					disabled={!task}
 					style={{ marginLeft: 30 }}
 				>
 					Add
