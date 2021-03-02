@@ -1,14 +1,30 @@
-import React, { useState, useEffect } from "react";
-// import { Link as RouterLink } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useDispatch } from "react-redux";
 import { Button, TextField } from "@material-ui/core";
-// import ClearIcon from "@material-ui/icons/Clear";
 
-const Tags = ({ filterTag }) => {
+import { db } from "../firebase/config";
+import { filterTags } from "../actions/todo-action";
+import { AuthContext } from "./Auth";
+
+const Tags = () => {
 	const [tagList, setTagList] = useState([]);
+	const dispatch = useDispatch();
+	const { uid } = useContext(AuthContext);
 
 	useEffect(() => {
-		filterTag(tagList);
-	}, [tagList.length]);
+		let initials = {};
+		db.ref(`all_lists/${uid}`).on("value", (snapshot) => {
+			snapshot.forEach((snap) => {
+				console.log(snap.val());
+				const { name, todos } = snap.val();
+				if (todos && name !== "deleted") {
+					initials[snap.val().name] = snap.val();
+				}
+			});
+			dispatch(filterTags(tagList, initials));
+			// console.log("tags dispatched", initials);
+		});
+	}, [tagList.length, uid, dispatch]);
 
 	const pushToTagList = (e) => {
 		let tag = e.target.value;

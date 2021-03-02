@@ -9,17 +9,19 @@ import {
 	IconButton,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { useDispatch } from "react-redux";
 
 import { db } from "../firebase/config";
 import { AuthContext } from "./Auth";
+import { deleteTodo } from "../actions/todo-action";
 
-const Todo = ({ todo, onDelete, index, listName }) => {
+const Todo = ({ todo, index, listName }) => {
 	let { id, task, created, date } = todo;
-	// set up toggle finish
 	const { uid } = useContext(AuthContext);
-	const baseUrl = `all_lists/${uid}/${listName}/todos/${index}`;
 	const [finished, setFinished] = useState("");
+	const dispatch = useDispatch();
 
+	const baseUrl = `all_lists/${uid}/${listName}/todos/${index}`;
 	useEffect(() => {
 		db.ref(`${baseUrl}/finished`)
 			.get()
@@ -29,12 +31,16 @@ const Todo = ({ todo, onDelete, index, listName }) => {
 	}, [baseUrl]);
 
 	const toggleTodo = () => {
-		console.log(baseUrl);
 		db.ref(`${baseUrl}`)
 			.update({ finished: !finished })
 			.then(() => {
 				setFinished(!finished);
 			});
+	};
+
+	// mark as deleted and move to deleted list, careful on edge case of empty list
+	const onDelete = (listName, todoId) => {
+		dispatch(deleteTodo(uid, listName, todoId));
 	};
 
 	return (
@@ -90,7 +96,7 @@ const Todo = ({ todo, onDelete, index, listName }) => {
 								<IconButton
 									edge="end"
 									aria-label="delete"
-									onClick={() => onDelete(id, listName)}
+									onClick={() => onDelete(listName, id)}
 								>
 									<DeleteIcon />
 								</IconButton>

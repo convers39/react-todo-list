@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, TextField } from "@material-ui/core";
+import { useDispatch, useSelector } from "react-redux";
 
-const NewTodo = ({ addTodo }) => {
+import { AuthContext } from "./Auth";
+import { addTodo } from "../actions/todo-action";
+
+const NewTodo = () => {
 	const [task, setTask] = useState("");
 	const [error, setError] = useState(false);
+
+	const { uid } = useContext(AuthContext);
+	const dispatch = useDispatch();
 
 	const onTask = (e) => {
 		const task = e.target.value;
@@ -48,9 +55,10 @@ const NewTodo = ({ addTodo }) => {
 				.filter((w) => !w.startsWith("#"))
 				.join(" ");
 		}
-
+		console.log("check new todo args", taskText, date, tags);
 		setTask("");
-		addTodo(taskText, listName, date, tags);
+		// addTodo(taskText, listName, date, tags);
+		dispatch(addTodo(uid, listName, taskText, date, tags));
 	};
 
 	const style = {
@@ -94,7 +102,7 @@ const NewTodo = ({ addTodo }) => {
 					variant="outlined"
 					color="primary"
 					type="submit"
-					disabled={!task}
+					disabled={!task || error}
 					style={{ marginLeft: 30 }}
 				>
 					Add

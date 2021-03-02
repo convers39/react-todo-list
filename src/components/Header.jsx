@@ -2,11 +2,13 @@ import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { firebaseAuth } from "../firebase/config";
 import { AuthContext } from "./Auth";
-import { Button } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
+import {
+	Button,
+	AppBar,
+	Toolbar,
+	Typography,
+	IconButton,
+} from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
