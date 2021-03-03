@@ -1,10 +1,10 @@
-import { connect } from "react-redux";
-import List from "../components/List";
+import { connect } from 'react-redux'
+import List from '../components/List'
 
 const mapStateToProps = (state, ownProps) => {
-	return {
-		list: state.lists[ownProps.listName],
-	};
-};
+  return {
+    list: state.lists[ownProps.listName]
+  }
+}
 
-export default connect(mapStateToProps)(List);
+export default connect(mapStateToProps)(List)
