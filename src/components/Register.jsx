@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { Redirect, Link as RouterLink } from 'react-router-dom'
+import React from 'react'
+import { Redirect, Link as RouterLink, useHistory } from 'react-router-dom'
 import {
   TextField,
   Card,
@@ -10,8 +10,7 @@ import {
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
-import { firebaseAuth } from '../firebase/config'
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -42,21 +41,22 @@ const useStyles = makeStyles((theme) =>
 )
 
 const Register = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
   const classes = useStyles()
-  const signUp = (e) => {
-    e && e.preventDefault()
+  const { signUp, currentUser } = useAuth()
+  const history = useHistory()
+
+  const handleSignUp = (e) => {
+    e.preventDefault()
     const { email, password } = e.target.elements
-    firebaseAuth
-      .createUserWithEmailAndPassword(email.value, password.value)
+    signUp(email.value, password.value)
       .then((data) => {
-        setIsLoggedIn(true)
+        history.push('/login')
         console.log(data)
       })
       .catch(console.error)
   }
 
-  if (isLoggedIn) {
+  if (currentUser) {
     return <Redirect to='/' />
   }
 
@@ -66,7 +66,7 @@ const Register = () => {
         className={classes.container}
         noValidate
         autoComplete='off'
-        onSubmit={signUp}
+        onSubmit={handleSignUp}
       >
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='Sign Up' />

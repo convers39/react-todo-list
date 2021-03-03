@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { DragDropContext } from 'react-beautiful-dnd'
 import { Typography } from '@material-ui/core'
 
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 import { fetchLists, moveTodo } from '../actions/todo-action'
 
 import List from './List'
@@ -11,7 +11,7 @@ import NewTodo from './NewTodo'
 import Tags from './Tags'
 
 const ListBoard = () => {
-  const { uid } = useContext(AuthContext)
+  const { uid } = useAuth()
 
   const dispatch = useDispatch()
   const lists = useSelector((state) => state)

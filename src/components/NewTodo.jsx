@@ -1,15 +1,15 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Button, TextField } from '@material-ui/core'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 import { addTodo } from '../actions/todo-action'
 
 const NewTodo = () => {
   const [task, setTask] = useState('')
   const [error, setError] = useState(false)
 
-  const { uid } = useContext(AuthContext)
+  const { uid } = useAuth()
   const dispatch = useDispatch()
 
   const onTask = (e) => {
@@ -72,12 +72,7 @@ const NewTodo = () => {
 
   return (
     <div className='new-task' style={{ border: '1px solid #3F51B5' }}>
-      <form
-        style={style}
-        noValidate
-        autoComplete='off'
-        onSubmit={onSubmit}
-      >
+      <form style={style} noValidate autoComplete='off' onSubmit={onSubmit}>
         <TextField
           id='standard-basic'
           label='New Todo'
@@ -95,7 +90,7 @@ const NewTodo = () => {
           type='date'
           defaultValue={new Date().toLocaleDateString('en-CA')}
           InputLabelProps={{
-					  shrink: true
+            shrink: true
           }}
         />
         <Button

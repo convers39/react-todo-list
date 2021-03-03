@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { Redirect, Link as RouterLink, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Redirect, Link as RouterLink, useHistory } from 'react-router-dom'
 import {
   TextField,
   Card,
@@ -9,8 +9,7 @@ import {
   Button
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import { firebaseAuth } from '../firebase/config'
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -45,16 +44,17 @@ const useStyles = makeStyles((theme) =>
 
 const Login = () => {
   const classes = useStyles()
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
+  const { logIn, currentUser, setCurrentUser } = useAuth()
+  const history = useHistory()
 
-  const onSubmit = (e) => {
+  const handleLogIn = (e) => {
     e && e.preventDefault()
     const { email, password } = e.target.elements
-    firebaseAuth
-      .signInWithEmailAndPassword(email.value, password.value)
-      .then((data) => {
-        setIsLoggedIn(true)
-        console.log('login page', data)
+    logIn(email.value, password.value)
+      .then((user) => {
+        setCurrentUser(user)
+        console.log('login page user', user)
+        history.push('/')
       })
       .catch((err) => {
         console.log(err)
@@ -62,7 +62,7 @@ const Login = () => {
   }
 
   // const { state } = useLocation()
-  if (isLoggedIn) {
+  if (currentUser) {
     return <Redirect to='/' />
   }
   return (
@@ -71,7 +71,7 @@ const Login = () => {
         className={classes.container}
         noValidate
         autoComplete='off'
-        onSubmit={onSubmit}
+        onSubmit={handleLogIn}
       >
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='Login' />

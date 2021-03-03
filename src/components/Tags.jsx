@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Button, TextField } from '@material-ui/core'
 
 import { db } from '../firebase/config'
 import { filterTags } from '../actions/todo-action'
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 
 const Tags = () => {
   const [tagList, setTagList] = useState([])
   const dispatch = useDispatch()
-  const { uid } = useContext(AuthContext)
+  const { uid } = useAuth()
 
   useEffect(() => {
     const initials = {}
@@ -46,7 +46,7 @@ const Tags = () => {
   const style = {
     backgroundColor: '#eee',
     padding: '1.5em 3em',
-    margin: '.5em auto',
+    margin: '.5em auto'
   }
 
   return (
@@ -61,7 +61,7 @@ const Tags = () => {
         fullWidth
         margin='normal'
         InputLabelProps={{
-          shrink: true,
+          shrink: true
         }}
       />
       <div style={{ display: 'flex', alignItems: 'center' }}>

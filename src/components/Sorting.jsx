@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Button, ButtonGroup } from '@material-ui/core'
 import SortIcon from '@material-ui/icons/Sort'
 import { useDispatch } from 'react-redux'
-import { AuthContext } from './Auth'
+import { useAuth } from '../contexts/Auth'
 import { sortTodo } from '../actions/todo-action'
 
 const Sorting = ({ listName }) => {
@@ -13,7 +13,7 @@ const Sorting = ({ listName }) => {
     margin: '0.5em 0'
   }
 
-  const { uid } = useContext(AuthContext)
+  const { uid } = useAuth()
   const dispatch = useDispatch()
 
   const onSort = (sorting) => {

@@ -6,8 +6,9 @@ import ListBoard from './components/ListBoard'
 import Header from './components/Header'
 import Register from './components/Register'
 import Login from './components/Login'
+import Profile from './components/Profile'
 
-import { AuthProvider } from './components/Auth'
+import { AuthProvider } from './contexts/Auth'
 import PrivateRoute from './components/PrivateRoute'
 
 function App() {
@@ -15,19 +16,14 @@ function App() {
     <div className='App'>
       <CssBaseline />
       <Container maxWidth='md'>
-        {/* <Typography
-					component="div"
-					style={{ backgroundColor: "#cfe8fc", height: "100vh" }}
-				/> */}
         <AuthProvider>
           <Router>
             <Header />
             <Switch>
+              <PrivateRoute exact path='/' component={ListBoard} />
+              <PrivateRoute exact path='/profile' component={Profile} />
               <Route exact path='/login' component={Login} />
               <Route exact path='/register' component={Register} />
-              <PrivateRoute redirectTo='/login' path='/'>
-                <ListBoard />
-              </PrivateRoute>
             </Switch>
           </Router>
         </AuthProvider>

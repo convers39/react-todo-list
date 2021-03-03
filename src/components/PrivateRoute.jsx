@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
-import { AuthContext } from './Auth'
+import React from 'react'
+import { useAuth } from '../contexts/Auth'
 import { Route, Redirect } from 'react-router-dom'
 
-const PrivateRoute = (props) => {
-  const { isLoggedIn } = useContext(AuthContext)
-  console.log('private', isLoggedIn, props)
-  // if (isLoggedIn) {
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const { currentUser } = useAuth()
+  console.log('private', currentUser)
+  // if (currentUser) {
   //   return (
   //     <Route exact path={props.path}>
   //       {props.children}
@@ -16,9 +16,9 @@ const PrivateRoute = (props) => {
   // }
   return (
     <Route
-      exact
-      render={() => {
-        return isLoggedIn ? props.children : <Redirect to='/login' />
+      {...rest}
+      render={(props) => {
+        return currentUser ? <Component {...props} /> : <Redirect to='/login' />
       }}
     />
   )

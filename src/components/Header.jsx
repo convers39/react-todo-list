@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
-import { firebaseAuth } from '../firebase/config'
-import { AuthContext } from './Auth'
+import React from 'react'
+import { Link as RouterLink, useHistory } from 'react-router-dom'
+
+import { useAuth } from '../contexts/Auth'
 import {
   Button,
   AppBar,
@@ -8,17 +9,17 @@ import {
   Typography,
   IconButton
 } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
+// import MenuIcon from '@material-ui/icons/Menu'
+import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 const Header = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
-
+  const { currentUser, logOut } = useAuth()
+  const history = useHistory()
   const handleLogOut = (e) => {
     e.preventDefault()
-    firebaseAuth
-      .signOut()
-      .then(() => setIsLoggedIn(false))
+    logOut()
+      .then(() => history.push('/login'))
       .catch(console.error)
   }
 
@@ -29,11 +30,15 @@ const Header = () => {
       <AppBar position='static'>
         <Toolbar style={style}>
           <IconButton edge='start' color='inherit' aria-label='menu'>
-            <MenuIcon />
+            {currentUser && (
+              <Button component={RouterLink} to='/profile'>
+                <AccountBoxIcon style={{ color: 'white' }} />
+              </Button>
+            )}
           </IconButton>
           <Typography variant='h6'>Todo List</Typography>
           <div>
-            {isLoggedIn && (
+            {currentUser && (
               <Button onClick={handleLogOut}>
                 <ExitToAppIcon style={{ color: 'white' }} />
               </Button>
