@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Redirect, Link as RouterLink } from 'react-router-dom'
+import { Redirect, Link as RouterLink, useLocation } from 'react-router-dom'
 import {
   TextField,
   Card,
@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) =>
 
 const Login = () => {
   const classes = useStyles()
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
 
   const onSubmit = (e) => {
     e && e.preventDefault()
@@ -52,6 +53,7 @@ const Login = () => {
     firebaseAuth
       .signInWithEmailAndPassword(email.value, password.value)
       .then((data) => {
+        setIsLoggedIn(true)
         console.log('login page', data)
       })
       .catch((err) => {
@@ -59,9 +61,8 @@ const Login = () => {
       })
   }
 
-  const { isLoggedIn } = useContext(AuthContext)
+  // const { state } = useLocation()
   if (isLoggedIn) {
-    console.log(isLoggedIn)
     return <Redirect to='/' />
   }
   return (
@@ -76,7 +77,7 @@ const Login = () => {
           <CardHeader className={classes.header} title='Login' />
           <CardContent>
             <TextField
-							// error={state.isError}
+              // error={state.isError}
               fullWidth
               id='email'
               type='email'
@@ -85,7 +86,7 @@ const Login = () => {
               margin='normal'
             />
             <TextField
-							// error={state.isError}
+              // error={state.isError}
               fullWidth
               id='password'
               type='password'

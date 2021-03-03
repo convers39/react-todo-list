@@ -8,7 +8,7 @@ export const fetchLists = (uid) => {
       snapshot.forEach((snap) => {
         const { name, todos } = snap.val()
         if (todos && name) {
-          allLists[snap.val().name] = snap.val()
+          allLists[name] = snap.val()
         }
       })
       console.log('actions fetch lists', allLists)
@@ -53,9 +53,9 @@ export const addTodo = (uid, listName, task, date, tags) => {
     console.log('new todo', newTodo)
     const currentList = lists[listName]
     let todos =
-			currentList && Object.keys(currentList) && currentList.todos
-			  ? currentList.todos
-			  : []
+      currentList && Object.keys(currentList) && currentList.todos
+        ? currentList.todos
+        : []
 
     // clear empty items in todos, which will lead to error when write the DB
     todos = todos.filter(Boolean)
@@ -63,9 +63,7 @@ export const addTodo = (uid, listName, task, date, tags) => {
     // set a new list with input list name and todos, then update remove and local
     const newList = { name: listName, todos: [newTodo, ...todos] }
     console.log('newlist', newList)
-    db.ref(`all_lists/${uid}/${listName}`)
-      .set(newList)
-      .catch(console.error)
+    db.ref(`all_lists/${uid}/${listName}`).set(newList).catch(console.error)
 
     // dispatch action to reducer
     dispatch({ type: 'ADD_TODO', payload: { newList, listName } })
@@ -77,24 +75,22 @@ export const deleteTodo = (uid, listName, todoId) => {
     const lists = getState()
     const deleted = lists.deleted
     const baseUrl = `all_lists/${uid}/${listName}/todos`
-    const deletedUrl = `all_lists/${uid}/deleted`
+    const deletedUrl = `all_lists/${uid}/deleted/todos`
     console.log('lists in delete', lists)
     const todos = [...lists[listName].todos]
     // let deleted = await (await db.ref(`${deletedUrl}`).get()).val();
 
     // check if deleted todos exist, if not set to empty array
     const deletedTodos =
-			Object.keys(deleted).length && deleted.todos
-			  ? [...deleted.todos]
-			  : []
+      Object.keys(deleted).length && deleted.todos ? [...deleted.todos] : []
 
     // retrieve the deleted todo item, push to deleted todos
-    let removed
+    // let removed
     for (let index = 0; index < todos.length; index++) {
       const todo = todos[index]
       if (todo.id === todoId) {
-        todo.deleted = 1;
-        [removed] = todos.splice(index, 1)
+        todo.deleted = 1
+        var [removed] = todos.splice(index, 1)
         deletedTodos.push(removed)
       }
     }
@@ -102,6 +98,7 @@ export const deleteTodo = (uid, listName, todoId) => {
     // set new deleted todo list to local and remote
     const deletedList = { name: 'deleted', todos: deletedTodos }
     db.ref(`${deletedUrl}`).set(deletedList).catch(console.error)
+    // db.ref(`${deletedUrl}`).push(removed).catch(console.error)
 
     // set updated list to remote
     db.ref(`${baseUrl}`).set(todos).catch(console.error)
@@ -113,15 +110,15 @@ export const deleteTodo = (uid, listName, todoId) => {
     }
     // update local lists, empty todo list will lead to error on dnd-beautiful
     const newAllLists =
-			todos && todos.length
-			  ? {
-			      ...lists,
-			      [listName]: {
-			        name: listName,
-			        todos: todos
-			      }
-				  }
-			  : { ...copy }
+      todos && todos.length
+        ? {
+            ...lists,
+            [listName]: {
+              name: listName,
+              todos: todos
+            }
+          }
+        : { ...copy }
 
     dispatch({ type: 'DELETE_TODO', payload: { newAllLists } })
   }
@@ -167,23 +164,20 @@ export const filterTags = (tagList, initials) => {
       console.log('initial lists before filter', copy)
 
       // check each todo tags contains all tags in tagList
-      const checkSubArray = (arr, sub) =>
-        sub.every((v) => arr.includes(v))
+      const checkSubArray = (arr, sub) => sub.every((v) => arr.includes(v))
 
       // loop over all todo list
       for (const listName in copy) {
         // initialize todos as empty array
         newAllLists[listName] = { name: listName, todos: [] }
-        newAllLists[listName].todos = copy[listName].todos.filter(
-          (todo) => {
-            // check if current todo has tags, if tags is an empty array,
-            // it will not be saved in remote DB, which will lead to todo.tags = undefined issue
-            if (todo.hasOwnProperty('tags')) {
-              return checkSubArray(todo.tags, tagList)
-            }
-            return false
+        newAllLists[listName].todos = copy[listName].todos.filter((todo) => {
+          // check if current todo has tags, if tags is an empty array,
+          // it will not be saved in remote DB, which will lead to todo.tags = undefined issue
+          if (todo.hasOwnProperty('tags')) {
+            return checkSubArray(todo.tags, tagList)
           }
-        )
+          return false
+        })
       }
       console.log('filtered lists', newAllLists)
       dispatch({ type: 'FILTER_TODO', payload: { newAllLists } })
@@ -210,9 +204,7 @@ export const moveTodo = (uid, result) => {
       destListTodos.splice(destination.index, 0, removed)
 
       // update both source and destination lists
-      db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(
-        sourceListTodos
-      )
+      db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(sourceListTodos)
       db.ref(`all_lists/${uid}/${destListName}/todos`).set(destListTodos)
 
       const newAllLists = {
@@ -232,9 +224,7 @@ export const moveTodo = (uid, result) => {
       const [removed] = sourceListTodos.splice(source.index, 1)
       sourceListTodos.splice(destination.index, 0, removed)
 
-      db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(
-        sourceListTodos
-      )
+      db.ref(`all_lists/${uid}/${sourceListName}/todos`).set(sourceListTodos)
       const newAllLists = {
         ...lists,
         [sourceListName]: {

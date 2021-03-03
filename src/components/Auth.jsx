@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     firebaseAuth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(user.uid)
+        console.log('authentication', user.uid)
         setUid(user.uid)
         setIsLoggedIn(true)
       }

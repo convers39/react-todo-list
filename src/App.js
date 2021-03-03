@@ -8,8 +8,9 @@ import Register from './components/Register'
 import Login from './components/Login'
 
 import { AuthProvider } from './components/Auth'
+import PrivateRoute from './components/PrivateRoute'
 
-function App () {
+function App() {
   return (
     <div className='App'>
       <CssBaseline />
@@ -22,13 +23,11 @@ function App () {
           <Router>
             <Header />
             <Switch>
-              <Route exact path='/' component={ListBoard} />
               <Route exact path='/login' component={Login} />
-              <Route
-                exact
-                path='/register'
-                component={Register}
-              />
+              <Route exact path='/register' component={Register} />
+              <PrivateRoute redirectTo='/login' path='/'>
+                <ListBoard />
+              </PrivateRoute>
             </Switch>
           </Router>
         </AuthProvider>

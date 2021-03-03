@@ -51,9 +51,8 @@ const ListBoard = () => {
         {Object.keys(lists).length ? (
           <DragDropContext onDragEnd={onDragEnd}>
             {Object.entries(lists).map(
-						  ([listName, list], index) =>
-						    listName !== 'deleted' &&
-								renderList(listName, list.todos)
+              ([listName, list], index) =>
+                listName !== 'deleted' && renderList(listName, list.todos)
             )}
           </DragDropContext>
         ) : (

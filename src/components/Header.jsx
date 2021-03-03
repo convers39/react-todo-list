@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { Redirect } from 'react-router-dom'
 import { firebaseAuth } from '../firebase/config'
 import { AuthContext } from './Auth'
 import {
@@ -34,12 +33,10 @@ const Header = () => {
           </IconButton>
           <Typography variant='h6'>Todo List</Typography>
           <div>
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <Button onClick={handleLogOut}>
                 <ExitToAppIcon style={{ color: 'white' }} />
               </Button>
-            ) : (
-              <Redirect to='/login' />
             )}
           </div>
         </Toolbar>

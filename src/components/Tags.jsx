@@ -18,7 +18,7 @@ const Tags = () => {
         console.log(snap.val())
         const { name, todos } = snap.val()
         if (todos && name !== 'deleted') {
-          initials[snap.val().name] = snap.val()
+          initials[name] = snap.val()
         }
       })
       dispatch(filterTags(tagList, initials))
@@ -46,7 +46,7 @@ const Tags = () => {
   const style = {
     backgroundColor: '#eee',
     padding: '1.5em 3em',
-    margin: '.5em auto'
+    margin: '.5em auto',
   }
 
   return (
@@ -57,11 +57,11 @@ const Tags = () => {
         label='Tag Filter'
         style={{ margin: '.5em auto' }}
         placeholder='Press enter to input a tag, click tag to remove'
-				// helperText={tagList.length ? "Click tag to remove" : ""}
+        // helperText={tagList.length ? "Click tag to remove" : ""}
         fullWidth
         margin='normal'
         InputLabelProps={{
-				  shrink: true
+          shrink: true,
         }}
       />
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -76,16 +76,16 @@ const Tags = () => {
           Reset
         </Button>
         {tagList.length ? (
-				  tagList.map((tag) => (
-  <Button
-    color='primary'
-    onClick={() => removeFromTagList(tag)}
-    key={tag}
-    style={{ margin: '0 .5em' }}
-  >
-    #{tag}
-  </Button>
-				  ))
+          tagList.map((tag) => (
+            <Button
+              color='primary'
+              onClick={() => removeFromTagList(tag)}
+              key={tag}
+              style={{ margin: '0 .5em' }}
+            >
+              #{tag}
+            </Button>
+          ))
         ) : (
           <p style={{ margin: '0 .5em' }}>No tags</p>
         )}

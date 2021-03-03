@@ -72,7 +72,7 @@ const Register = () => {
           <CardHeader className={classes.header} title='Sign Up' />
           <CardContent>
             <TextField
-							// error={state.isError}
+              // error={state.isError}
               fullWidth
               id='email'
               type='email'
@@ -81,7 +81,7 @@ const Register = () => {
               margin='normal'
             />
             <TextField
-							// error={state.isError}
+              // error={state.isError}
               fullWidth
               id='password'
               type='password'
@@ -102,7 +102,7 @@ const Register = () => {
             <Button
               variant='outlined'
               size='large'
-              color='primary '
+              color='primary'
               component={RouterLink}
               to='/login'
             >
