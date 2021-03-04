@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Redirect, Link as RouterLink, useHistory } from 'react-router-dom'
 import {
   TextField,
@@ -8,6 +8,7 @@ import {
   CardHeader,
   Button
 } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 import { useAuth } from '../contexts/Auth'
 
@@ -46,6 +47,38 @@ const Login = () => {
   const classes = useStyles()
   const { logIn, currentUser, setCurrentUser } = useAuth()
   const history = useHistory()
+  const [formErrors, setFormErrors] = useState({
+    email: '',
+    password: ''
+  })
+  const [authError, setAuthError] = useState({ msg: '' })
+
+  const handleFocus = (e) => {
+    const { name } = e.target
+    setAuthError({ msg: '' })
+    setFormErrors({ ...formErrors, [name]: '' })
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    const errors = { ...formErrors }
+    switch (name) {
+      case 'email':
+        const emailRe = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        errors[name] = emailRe.test(value) ? '' : 'Invalid email address'
+        break
+      case 'password':
+        const passwordRe = /(?=.*\d)(?=.*[a-z]|[A-Z]).{6,20}/
+
+        errors[name] = passwordRe.test(value)
+          ? ''
+          : 'Password must be at least 6 characters including digits and characters'
+        break
+      default:
+        break
+    }
+    formErrors !== errors && setFormErrors(errors)
+  }
 
   const handleLogIn = (e) => {
     e && e.preventDefault()
@@ -58,6 +91,7 @@ const Login = () => {
       })
       .catch((err) => {
         console.log(err)
+        setAuthError({ msg: err.message })
       })
   }
 
@@ -75,24 +109,33 @@ const Login = () => {
       >
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='Login' />
+          {authError.msg && <Alert severity='error'>{authError.msg}</Alert>}
           <CardContent>
             <TextField
-              // error={state.isError}
               fullWidth
               id='email'
+              name='email'
               type='email'
               label='Email'
               placeholder='Email'
               margin='normal'
+              onFocus={handleFocus}
+              onBlur={handleChange}
+              error={!!formErrors.email}
+              helperText={formErrors.email}
             />
             <TextField
-              // error={state.isError}
               fullWidth
               id='password'
+              name='password'
               type='password'
               label='Password'
               placeholder='Password'
               margin='normal'
+              onFocus={handleFocus}
+              onBlur={handleChange}
+              error={!!formErrors.password}
+              helperText={formErrors.password}
             />
           </CardContent>
           <CardActions className={classes.actions}>
@@ -101,6 +144,7 @@ const Login = () => {
               size='large'
               color='primary'
               type='submit'
+              disabled={!!formErrors.email || !!formErrors.password}
             >
               Log in
             </Button>
