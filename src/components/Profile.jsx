@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react'
 import { useAuth } from '../contexts/Auth'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
 import {
-  // Alert,
   TextField,
   Card,
   CardContent,
@@ -10,7 +9,7 @@ import {
   CardHeader,
   Button
 } from '@material-ui/core'
-// import Alert from '@material-ui/core/Alert'
+import { Alert } from '@material-ui/lab'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) =>
@@ -93,7 +92,7 @@ const Profile = () => {
       >
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='Profile' />
-          {/* {error && <Alert severity='error'>{error}</Alert>} */}
+          {error && <Alert severity='error'>{error}</Alert>}
           <CardContent>
             <TextField
               // error={state.isError}

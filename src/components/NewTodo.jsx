@@ -57,7 +57,6 @@ const NewTodo = () => {
     }
     console.log('check new todo args', taskText, date, tags)
     setTask('')
-    // addTodo(taskText, listName, date, tags);
     dispatch(addTodo(uid, listName, taskText, date, tags))
   }
 

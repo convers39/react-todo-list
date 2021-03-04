@@ -52,24 +52,24 @@ const Login = () => {
     password: ''
   })
   const [authError, setAuthError] = useState({ msg: '' })
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleFocus = (e) => {
+  const resetError = (e) => {
     const { name } = e.target
     setAuthError({ msg: '' })
     setFormErrors({ ...formErrors, [name]: '' })
   }
 
-  const handleChange = (e) => {
+  const validateInput = (e) => {
     const { name, value } = e.target
     const errors = { ...formErrors }
     switch (name) {
       case 'email':
-        const emailRe = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        const emailRe = /^([a-zA-Z0-9_.-]+@[\da-zA-Z.-]+\.[a-zA-Z.]{2,6})$/
         errors[name] = emailRe.test(value) ? '' : 'Invalid email address'
         break
       case 'password':
         const passwordRe = /(?=.*\d)(?=.*[a-z]|[A-Z]).{6,20}/
-
         errors[name] = passwordRe.test(value)
           ? ''
           : 'Password must be at least 6 characters including digits and characters'
@@ -81,7 +81,8 @@ const Login = () => {
   }
 
   const handleLogIn = (e) => {
-    e && e.preventDefault()
+    e.preventDefault()
+    setSubmitting(true)
     const { email, password } = e.target.elements
     logIn(email.value, password.value)
       .then((user) => {
@@ -91,6 +92,7 @@ const Login = () => {
       })
       .catch((err) => {
         console.log(err)
+        setSubmitting(false)
         setAuthError({ msg: err.message })
       })
   }
@@ -119,8 +121,8 @@ const Login = () => {
               label='Email'
               placeholder='Email'
               margin='normal'
-              onFocus={handleFocus}
-              onBlur={handleChange}
+              onFocus={resetError}
+              onBlur={validateInput}
               error={!!formErrors.email}
               helperText={formErrors.email}
             />
@@ -130,10 +132,10 @@ const Login = () => {
               name='password'
               type='password'
               label='Password'
-              placeholder='Password'
+              placeholder='Password includes 6-20 characters and numbers'
               margin='normal'
-              onFocus={handleFocus}
-              onBlur={handleChange}
+              onFocus={resetError}
+              onBlur={validateInput}
               error={!!formErrors.password}
               helperText={formErrors.password}
             />
@@ -144,7 +146,9 @@ const Login = () => {
               size='large'
               color='primary'
               type='submit'
-              disabled={!!formErrors.email || !!formErrors.password}
+              disabled={
+                !!formErrors.email || !!formErrors.password || submitting
+              }
             >
               Log in
             </Button>
@@ -152,6 +156,7 @@ const Login = () => {
               variant='outlined'
               size='large'
               color='primary'
+              disabled={submitting}
               component={RouterLink}
               to='/register'
             >
