@@ -7,7 +7,7 @@ export const fetchLists = (uid) => {
     db.ref(`all_lists/${uid}`).on('value', (snapshot) => {
       snapshot.forEach((snap) => {
         const { name, todos } = snap.val()
-        if (todos && name) {
+        if (todos && name !== 'tags') {
           allLists[name] = snap.val()
         }
       })
@@ -18,17 +18,22 @@ export const fetchLists = (uid) => {
   }
 }
 
+export const fetchTags = (uid) => {
+  return (dispatch, getState) => {
+    db.ref(`tags/${uid}`)
+      .get()
+      .then((tags) => {
+        console.log('tags', tags)
+        dispatch({ type: 'FETCH_TAGS', payload: tags })
+      })
+  }
+}
+
 export const fetchDeleted = (uid) => {
   return (dispatch, getState) => {
     // api call
     const allLists = {} // getState()
     db.ref(`all_lists/${uid}/deleted`).on('value', (snapshot) => {
-      snapshot.forEach((snap) => {
-        const { name, todos } = snap.val()
-        if (todos && name !== 'deleted') {
-          allLists[snap.val().name] = snap.val()
-        }
-      })
       console.log('actions fetch lists', allLists)
       dispatch({ type: 'FETCH_LISTS', payload: allLists })
     })

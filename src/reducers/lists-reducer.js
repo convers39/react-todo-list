@@ -5,6 +5,7 @@ const DELETE_TODO = 'DELETE_TODO'
 const MOVE_TODO = 'MOVE_TODO'
 const SORT_TODO = 'SORT_TODO'
 const FILTER_TODO = 'FILTER_TODO'
+const FETCH_TAGS = 'FETCH_TAGS'
 
 const listsReducer = (state = {}, action) => {
   const { type, payload } = action
@@ -16,6 +17,8 @@ const listsReducer = (state = {}, action) => {
     case INITIALIZE:
       const { initial } = payload
       return initial
+    // case FETCH_TAGS:
+    //   return payload.tags
     case ADD_TODO:
       const { newList, listName } = payload
       return { ...lists, [listName]: newList }

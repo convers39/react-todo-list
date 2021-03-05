@@ -72,7 +72,7 @@ const Login = () => {
         const passwordRe = /(?=.*\d)(?=.*[a-z]|[A-Z]).{6,20}/
         errors[name] = passwordRe.test(value)
           ? ''
-          : 'Password must be at least 6 characters including digits and characters'
+          : 'At least 6 characters including digits and characters'
         break
       default:
         break

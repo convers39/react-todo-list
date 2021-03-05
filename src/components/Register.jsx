@@ -46,23 +46,18 @@ const Register = () => {
   const classes = useStyles()
   const { signUp, currentUser } = useAuth()
   const history = useHistory()
-  const {
-    clearErrors,
-    // register,
-    handleSubmit,
-    errors,
-    getValues,
-    control
-  } = useForm()
+  const { clearErrors, register, handleSubmit, errors, getValues } = useForm({
+    mode: 'onBlur'
+  })
   const [authError, setAuthError] = useState('')
   // const password = useRef({})
   // password.current = watch('password', '')
 
-  const handleSignUp = (e) => {
-    e.preventDefault()
-    const { email, password } = e.target.elements
+  const handleSignUp = (data) => {
+    console.log('sign up data', data)
+    const { email, password } = data
 
-    signUp(email.value, password.value)
+    signUp(email, password)
       .then((data) => {
         history.push('/login')
         console.log(data)
@@ -70,6 +65,12 @@ const Register = () => {
       .catch((err) => {
         setAuthError({ msg: err.message })
       })
+  }
+
+  const resetError = (e) => {
+    const { name } = e.target
+    setAuthError({ msg: '' })
+    clearErrors(name)
   }
 
   if (currentUser) {
@@ -88,12 +89,31 @@ const Register = () => {
           <CardHeader className={classes.header} title='Sign Up' />
           {authError.msg && <Alert severity='error'>{authError.msg}</Alert>}
           <CardContent>
-            <Controller
+            <TextField
+              fullWidth
+              id='email'
+              type='email'
+              name='email'
+              label='Email'
+              placeholder='Email'
+              margin='normal'
+              onFocus={resetError}
+              inputRef={register({
+                required: { value: true, message: 'This field is required' },
+                pattern: {
+                  value: /^([a-zA-Z0-9_.-]+@[\da-zA-Z.-]+\.[a-zA-Z.]{2,6})$/,
+                  message: 'Invalid email address'
+                }
+              })}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+            {/* <Controller
               name='email'
               control={control}
               defaultValue=''
               rules={{
-                required: true,
+                required: { value: true, message: 'This field is required' },
                 pattern: {
                   value: /^([a-zA-Z0-9_.-]+@[\da-zA-Z.-]+\.[a-zA-Z.]{2,6})$/,
                   message: 'Invalid email address'
@@ -112,66 +132,47 @@ const Register = () => {
                   // inputRef={register({
 
                   // })}
-                  error={errors.email}
+                  error={!!errors.email}
                   helperText={errors.email?.message}
                 />
               }
-            />
-            <Controller
+            /> */}
+            <TextField
+              fullWidth
+              id='password'
               name='password'
-              control={control}
-              defaultValue=''
-              rules={{
+              type='password'
+              label='Password'
+              placeholder='Password'
+              margin='normal'
+              onFocus={resetError}
+              error={!!errors.password}
+              inputRef={register({
                 pattern: {
                   value: /(?=.*\d)(?=.*[a-z]|[A-Z]).{6,20}/,
                   message:
                     'Password must be at least 6 characters including digits and characters'
                 },
-                required: true
-              }}
-              as={
-                <TextField
-                  fullWidth
-                  id='password'
-                  // name='password'
-                  type='password'
-                  label='Password'
-                  placeholder='Password'
-                  margin='normal'
-                  onFocus={() => clearErrors('password')}
-                  error={errors.password}
-                  // inputRef={register({
-
-                  // })}
-                  helperText={errors.password?.message}
-                />
-              }
+                required: { value: true, message: 'This field is required' }
+              })}
+              helperText={errors.password?.message}
             />
-            <Controller
+            <TextField
+              fullWidth
+              id='passwordConfirm'
               name='passwordConfirm'
-              control={control}
-              defaultValue=''
-              rules={{
-                required: true,
+              type='password'
+              label='Password Confirm'
+              placeholder='Password Confirm'
+              margin='normal'
+              onFocus={resetError}
+              inputRef={register({
+                required: { value: true, message: 'This field is required' },
                 validate: (value) =>
                   value === getValues('password') || 'The passwords must match'
-              }}
-              as={
-                <TextField
-                  fullWidth
-                  id='passwordConfirm'
-                  // name='passwordConfirm'
-                  type='password'
-                  label='Password Confirm'
-                  placeholder='Password Confirm'
-                  margin='normal'
-                  onFocus={() => clearErrors('passwordConfirm')}
-                  // inputRef={register({
-                  // })}
-                  error={errors.passwordConfirm}
-                  helperText={errors.passwordConfirm?.message}
-                />
-              }
+              })}
+              error={!!errors.passwordConfirm}
+              helperText={errors.passwordConfirm?.message}
             />
           </CardContent>
           <CardActions className={classes.actions}>
@@ -180,7 +181,7 @@ const Register = () => {
               size='large'
               color='primary'
               type='submit'
-              disabled={!!Object.keys(errors).length}
+              disabled={!!Object.keys(errors).length || !!authError.msg}
             >
               Sign up
             </Button>
