@@ -32,17 +32,23 @@ export const fetchTags = (uid) => {
 export const fetchDeleted = (uid) => {
   return (dispatch, getState) => {
     // api call
-    const allLists = {} // getState()
     db.ref(`all_lists/${uid}/deleted`).on('value', (snapshot) => {
-      console.log('actions fetch lists', allLists)
-      dispatch({ type: 'FETCH_LISTS', payload: allLists })
+      dispatch({ type: 'FETCH_DELETED', payload: '' })
     })
-    // allLists = await (await db.ref(`all_lists/${uid}`).get()).val();
   }
 }
 
+// TODO: separate add tags logic
 export const addTodo = (uid, listName, task, date, tags) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
+    // add new tag to remote tags
+    let remoteTags = await (await db.ref(`all_tags/${uid}`).get()).val()
+    // check the length of remote tags and filter new tags
+    const newTags = tags.filter((t) => !remoteTags.includes(t))
+    const newTagList = [...remoteTags, ...newTags]
+    console.log('add new tag list', remoteTags, newTags)
+    db.ref(`all_tags/${uid}`).set(newTagList).catch(console.error)
+
     const lists = getState()
     // check if the input list name exist, set its todos to empty array if not
     // structure new todo item

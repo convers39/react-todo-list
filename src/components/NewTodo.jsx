@@ -44,7 +44,7 @@ const NewTodo = () => {
     }
     const date = e.target.elements[1].value
 
-    // add tags
+    // add tags, TODO: need a autoComplete and keydown to add new tags
     let tags = []
     if (taskText.includes('#')) {
       const re = /^#\w+$/

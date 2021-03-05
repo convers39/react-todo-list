@@ -17,12 +17,10 @@ const Tags = () => {
   const { uid } = useAuth()
 
   useEffect(() => {
-    db.ref(`all_tags/${uid}`)
-      .get()
-      .then((tags) => {
-        console.log('tags', tags.val())
-        setRemoteTags(tags.val())
-      })
+    db.ref(`all_tags/${uid}`).on('value', (tags) => {
+      console.log('tags', tags.val())
+      setRemoteTags(tags.val())
+    })
   }, [uid])
 
   useEffect(() => {
@@ -105,7 +103,7 @@ const Tags = () => {
           <TextField
             {...params}
             variant='standard'
-            label='Todo Tags'
+            label='Filter by Tags'
             placeholder='Tags'
           />
         )}
