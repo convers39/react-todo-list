@@ -7,10 +7,10 @@ import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
-import listsReducer from './reducers/lists-reducer'
+import rootReducer from './reducers'
 
 const store = createStore(
-  listsReducer,
+  rootReducer,
   composeWithDevTools(applyMiddleware(thunk))
 )
 

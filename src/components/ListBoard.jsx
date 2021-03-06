@@ -14,7 +14,7 @@ const ListBoard = () => {
   const { uid } = useAuth()
 
   const dispatch = useDispatch()
-  const lists = useSelector((state) => state)
+  const lists = useSelector((state) => state.allLists)
 
   useEffect(() => {
     dispatch(fetchLists(uid))

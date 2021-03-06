@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button, TextField, Box } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 
@@ -8,26 +8,23 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 
 import { db } from '../firebase/config'
 import { filterTags } from '../actions/todo-action'
+import { fetchTags } from '../actions/tag-action'
 import { useAuth } from '../contexts/Auth'
 
 const Tags = () => {
   const [tagList, setTagList] = useState([])
-  const [remoteTags, setRemoteTags] = useState([])
+  const remoteTags = useSelector((state) => state.remoteTags)
   const dispatch = useDispatch()
   const { uid } = useAuth()
 
   useEffect(() => {
-    db.ref(`all_tags/${uid}`).on('value', (tags) => {
-      console.log('tags', tags.val())
-      setRemoteTags(tags.val())
-    })
+    dispatch(fetchTags(uid))
   }, [uid])
 
   useEffect(() => {
     const initials = {}
     db.ref(`all_lists/${uid}`).on('value', (snapshot) => {
       snapshot.forEach((snap) => {
-        console.log(snap.val())
         const { name, todos } = snap.val()
         if (todos && name !== 'deleted') {
           initials[name] = snap.val()

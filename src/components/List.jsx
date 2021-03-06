@@ -25,7 +25,7 @@ const List = ({ listName, todos, sort }) => {
       </Typography>
       <Sorting sort={sort} listName={listName} />
       <div className='list-container'>
-        {todos.length ? (
+        {todos?.length ? (
           <Droppable droppableId={listName}>
             {(provided, snapshot) => {
               return (

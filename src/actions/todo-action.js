@@ -2,30 +2,11 @@ import { db } from '../firebase/config'
 // action creator fetch all lists
 export const fetchLists = (uid) => {
   return (dispatch, getState) => {
-    // api call
-    const allLists = {} // getState()
     db.ref(`all_lists/${uid}`).on('value', (snapshot) => {
-      snapshot.forEach((snap) => {
-        const { name, todos } = snap.val()
-        if (todos && name !== 'tags') {
-          allLists[name] = snap.val()
-        }
-      })
-      console.log('actions fetch lists', allLists)
-      dispatch({ type: 'FETCH_LISTS', payload: allLists })
+      console.log('snapshot remote lists', snapshot.val())
+      dispatch({ type: 'FETCH_LISTS', payload: { allLists: snapshot.val() } })
     })
     // allLists = await (await db.ref(`all_lists/${uid}`).get()).val();
-  }
-}
-
-export const fetchTags = (uid) => {
-  return (dispatch, getState) => {
-    db.ref(`tags/${uid}`)
-      .get()
-      .then((tags) => {
-        console.log('tags', tags)
-        dispatch({ type: 'FETCH_TAGS', payload: tags })
-      })
   }
 }
 
@@ -38,29 +19,11 @@ export const fetchDeleted = (uid) => {
   }
 }
 
-// TODO: separate add tags logic
-export const addTodo = (uid, listName, task, date, tags) => {
+export const addTodo = (uid, listName, newTodo) => {
   return async (dispatch, getState) => {
-    // add new tag to remote tags
-    let remoteTags = await (await db.ref(`all_tags/${uid}`).get()).val()
-    // check the length of remote tags and filter new tags
-    const newTags = tags.filter((t) => !remoteTags.includes(t))
-    const newTagList = [...remoteTags, ...newTags]
-    console.log('add new tag list', remoteTags, newTags)
-    db.ref(`all_tags/${uid}`).set(newTagList).catch(console.error)
-
-    const lists = getState()
+    const lists = getState().allLists
     // check if the input list name exist, set its todos to empty array if not
-    // structure new todo item
-    const newTodo = {
-      id: `todo_${Date.now()}`,
-      task: task,
-      created: new Date().toLocaleDateString('en-CA'),
-      date: date || new Date().toLocaleDateString('en-CA'),
-      finished: false,
-      deleted: false,
-      tags: tags
-    }
+
     console.log('new todo', newTodo)
     const currentList = lists[listName]
     let todos =
@@ -74,7 +37,10 @@ export const addTodo = (uid, listName, task, date, tags) => {
     // set a new list with input list name and todos, then update remove and local
     const newList = { name: listName, todos: [newTodo, ...todos] }
     console.log('newlist', newList)
-    db.ref(`all_lists/${uid}/${listName}`).set(newList).catch(console.error)
+    await db
+      .ref(`all_lists/${uid}/${listName}`)
+      .set(newList)
+      .catch(console.error)
 
     // dispatch action to reducer
     dispatch({ type: 'ADD_TODO', payload: { newList, listName } })
@@ -83,7 +49,7 @@ export const addTodo = (uid, listName, task, date, tags) => {
 
 export const deleteTodo = (uid, listName, todoId) => {
   return (dispatch, getState) => {
-    const lists = getState()
+    const lists = getState().allLists
     const deleted = lists.deleted
     const baseUrl = `all_lists/${uid}/${listName}/todos`
     const deletedUrl = `all_lists/${uid}/deleted/todos`
@@ -137,7 +103,7 @@ export const deleteTodo = (uid, listName, todoId) => {
 
 export const sortTodo = (uid, sorting, listName) => {
   return (dispatch, getState) => {
-    const lists = getState()
+    const lists = getState().allLists
     const baseUrl = `all_lists/${uid}/${listName}/todos`
     const copy = [...lists[listName].todos]
 
@@ -199,7 +165,7 @@ export const filterTags = (tagList, initials) => {
 export const moveTodo = (uid, result) => {
   return (dispatch, getState) => {
     if (!result.destination) return
-    const lists = getState()
+    const lists = getState().allLists
     const { source, destination } = result
     const sourceListName = source.droppableId
     const destListName = destination.droppableId

@@ -5,25 +5,20 @@ const DELETE_TODO = 'DELETE_TODO'
 const MOVE_TODO = 'MOVE_TODO'
 const SORT_TODO = 'SORT_TODO'
 const FILTER_TODO = 'FILTER_TODO'
-const FETCH_TAGS = 'FETCH_TAGS'
 
 const listsReducer = (state = {}, action) => {
   const { type, payload } = action
   const lists = state
   switch (type) {
     case FETCH_LISTS:
-      const allLists = payload
-      return allLists
+      return payload.allLists
     case INITIALIZE:
-      const { initial } = payload
-      return initial
-    // case FETCH_TAGS:
-    //   return payload.tags
+      return payload.initial
     case ADD_TODO:
       const { newList, listName } = payload
       return { ...lists, [listName]: newList }
     case DELETE_TODO:
-      return payload.newAllLists
+      return { ...payload.newAllLists }
     case SORT_TODO:
       return {
         ...lists,
@@ -35,11 +30,10 @@ const listsReducer = (state = {}, action) => {
     case FILTER_TODO:
       return payload.newAllLists
     case MOVE_TODO:
-      console.log('reducer move todo')
       return payload.newAllLists
     default:
-      console.log('default state')
-      return lists
+      console.log('reducer default', state)
+      return state
   }
 }
 

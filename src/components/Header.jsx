@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
 
-import { useAuth } from '../contexts/Auth'
 import {
   Button,
   AppBar,
@@ -12,6 +11,8 @@ import {
 // import MenuIcon from '@material-ui/icons/Menu'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+
+import { useAuth } from '../contexts/Auth'
 
 const Header = () => {
   const { currentUser, logOut } = useAuth()
