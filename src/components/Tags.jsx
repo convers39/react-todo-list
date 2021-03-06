@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, TextField, Box } from '@material-ui/core'
+import { TextField } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 
 // import { Formik, Field } from 'formik'
@@ -11,11 +11,14 @@ import { filterTags } from '../actions/todo-action'
 import { fetchTags } from '../actions/tag-action'
 import { useAuth } from '../contexts/Auth'
 
+import { filterStyles as useStyles } from '../styles/mui-theme'
+
 const Tags = () => {
   const [tagList, setTagList] = useState([])
   const remoteTags = useSelector((state) => state.remoteTags)
   const dispatch = useDispatch()
   const { uid } = useAuth()
+  const classes = useStyles()
 
   useEffect(() => {
     dispatch(fetchTags(uid))
@@ -40,31 +43,8 @@ const Tags = () => {
     setTagList(tags)
   }
 
-  // const pushToTagList = (e) => {
-  //   const tag = e.target.value
-  //   if (e.key === 'Enter' && tag) {
-  //     e.target.value = ''
-  //     setTagList([...tagList, tag])
-  //   }
-  // }
-
-  // const removeFromTagList = (tag) => {
-  //   const copy = [...tagList].filter((item) => item !== tag)
-  //   setTagList(copy)
-  // }
-
-  // const resetFilter = () => {
-  //   setTagList([])
-  // }
-
-  const style = {
-    backgroundColor: '#eee',
-    padding: '1.5em 3em',
-    margin: '.5em auto'
-  }
-
   return (
-    <div style={style}>
+    <div className={classes.container}>
       {/* <Formik initialVars={{ autoComplete: [] }}>
         {() => (
           <Box margin={1}>
@@ -91,10 +71,11 @@ const Tags = () => {
       <Autocomplete
         multiple
         id='tags-standard'
+        fullWidth
+        className={classes.input}
         options={remoteTags || []}
         getOptionLabel={(option) => option}
         defaultValue={[]}
-        style={{ margin: '.5em auto' }}
         onChange={(e, newTags) => setNewTags(newTags)}
         renderInput={(params) => (
           <TextField
@@ -105,45 +86,6 @@ const Tags = () => {
           />
         )}
       />
-      {/* <TextField
-        onKeyDown={pushToTagList}
-        id='standard-full-width'
-        label='Tag Filter'
-        style={{ margin: '.5em auto' }}
-        placeholder='Press enter to input a tag, click tag to remove'
-        // helperText={tagList.length ? "Click tag to remove" : ""}
-        fullWidth
-        margin='normal'
-        InputLabelProps={{
-          shrink: true
-        }}
-      /> 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Button
-          variant='outlined'
-          color='secondary'
-          onClick={resetFilter}
-          disabled={!tagList.length}
-          disableElevation
-          style={{ marginRight: '.5em' }}
-        >
-          Reset
-        </Button>
-        {tagList.length ? (
-          tagList.map((tag) => (
-            <Button
-              color='primary'
-              onClick={() => removeFromTagList(tag)}
-              key={tag}
-              style={{ margin: '0 .5em' }}
-            >
-              #{tag}
-            </Button>
-          ))
-        ) : (
-          <p style={{ margin: '0 .5em' }}>No tags</p>
-        )}
-      </div>*/}
     </div>
   )
 }

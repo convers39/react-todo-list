@@ -9,39 +9,8 @@ import {
   Button
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
 import { useAuth } from '../contexts/Auth'
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    container: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      width: 400,
-      margin: `${theme.spacing(0)} auto`
-    },
-    loginBtn: {
-      marginTop: theme.spacing(2),
-      flexGrow: 1
-    },
-    header: {
-      textAlign: 'center',
-      background: '#3F51B5',
-      color: '#fff'
-    },
-    card: {
-      marginTop: theme.spacing(10)
-    },
-    input: {
-      padding: '0 1em'
-    },
-    actions: {
-      display: 'block',
-      textAlign: 'center',
-      marginBottom: theme.spacing(2)
-    }
-  })
-)
+import { loginStyles as useStyles } from '../styles/mui-theme'
 
 const Login = () => {
   const classes = useStyles()
@@ -144,7 +113,7 @@ const Login = () => {
             <Button
               variant='contained'
               size='large'
-              color='primary'
+              color='secondary'
               type='submit'
               disabled={
                 !!formErrors.email || !!formErrors.password || submitting
@@ -155,7 +124,7 @@ const Login = () => {
             <Button
               variant='outlined'
               size='large'
-              color='primary'
+              color='secondary'
               disabled={submitting}
               component={RouterLink}
               to='/register'

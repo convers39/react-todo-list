@@ -1,10 +1,11 @@
 import { db } from '../firebase/config'
-// action creator fetch all lists
+
 export const fetchLists = (uid) => {
   return (dispatch, getState) => {
     db.ref(`all_lists/${uid}`).on('value', (snapshot) => {
       console.log('snapshot remote lists', snapshot.val())
-      dispatch({ type: 'FETCH_LISTS', payload: { allLists: snapshot.val() } })
+      if (snapshot.val())
+        dispatch({ type: 'FETCH_LISTS', payload: { allLists: snapshot.val() } })
     })
     // allLists = await (await db.ref(`all_lists/${uid}`).get()).val();
   }
@@ -176,7 +177,7 @@ export const moveTodo = (uid, result) => {
     // check if source list and destination list are the same
     if (sourceListName !== destListName) {
       const destList = lists[destListName]
-      const destListTodos = [...destList.todos]
+      const destListTodos = destList.todos ? [...destList.todos] : []
       const [removed] = sourceListTodos.splice(source.index, 1)
       destListTodos.splice(destination.index, 0, removed)
 

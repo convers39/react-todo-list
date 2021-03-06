@@ -10,37 +10,9 @@ import {
   Button
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
 
 import { useAuth } from '../contexts/Auth'
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    container: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      width: 400,
-      margin: `${theme.spacing(0)} auto`
-    },
-    loginBtn: {
-      marginTop: theme.spacing(2),
-      flexGrow: 1
-    },
-    header: {
-      textAlign: 'center',
-      background: '#3F51B5',
-      color: '#fff'
-    },
-    card: {
-      marginTop: theme.spacing(10)
-    },
-    actions: {
-      display: 'block',
-      textAlign: 'center',
-      marginBottom: theme.spacing(2)
-    }
-  })
-)
+import { loginStyles as useStyles } from '../styles/mui-theme'
 
 const Register = () => {
   const classes = useStyles()
@@ -96,7 +68,7 @@ const Register = () => {
               name='email'
               label='Email'
               placeholder='Email'
-              margin='normal'
+              margin='dense'
               onFocus={resetError}
               inputRef={register({
                 required: { value: true, message: 'This field is required' },
@@ -108,35 +80,6 @@ const Register = () => {
               error={!!errors.email}
               helperText={errors.email?.message}
             />
-            {/* <Controller
-              name='email'
-              control={control}
-              defaultValue=''
-              rules={{
-                required: { value: true, message: 'This field is required' },
-                pattern: {
-                  value: /^([a-zA-Z0-9_.-]+@[\da-zA-Z.-]+\.[a-zA-Z.]{2,6})$/,
-                  message: 'Invalid email address'
-                }
-              }}
-              as={
-                <TextField
-                  fullWidth
-                  id='email'
-                  type='email'
-                  // name='email'
-                  label='Email'
-                  placeholder='Email'
-                  margin='normal'
-                  onFocus={() => clearErrors('email')}
-                  // inputRef={register({
-
-                  // })}
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                />
-              }
-            /> */}
             <TextField
               fullWidth
               id='password'
@@ -144,7 +87,7 @@ const Register = () => {
               type='password'
               label='Password'
               placeholder='Password'
-              margin='normal'
+              margin='dense'
               onFocus={resetError}
               error={!!errors.password}
               inputRef={register({
@@ -164,7 +107,7 @@ const Register = () => {
               type='password'
               label='Password Confirm'
               placeholder='Password Confirm'
-              margin='normal'
+              margin='dense'
               onFocus={resetError}
               inputRef={register({
                 required: { value: true, message: 'This field is required' },
@@ -179,7 +122,7 @@ const Register = () => {
             <Button
               variant='contained'
               size='large'
-              color='primary'
+              color='secondary'
               type='submit'
               disabled={!!Object.keys(errors).length || !!authError.msg}
             >
@@ -188,7 +131,7 @@ const Register = () => {
             <Button
               variant='outlined'
               size='large'
-              color='primary'
+              color='secondary'
               component={RouterLink}
               to='/login'
             >

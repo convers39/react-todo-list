@@ -10,7 +10,7 @@ const Sorting = ({ listName }) => {
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
-    margin: '0.5em 0'
+    margin: '0.5rem 0'
   }
 
   const { uid } = useAuth()
@@ -23,7 +23,7 @@ const Sorting = ({ listName }) => {
   return (
     <div style={style}>
       <SortIcon />
-      <ButtonGroup variant='contained' color='primary'>
+      <ButtonGroup variant='outlined' color='secondary'>
         <Button onClick={() => onSort('ASC')}>by created</Button>
         <Button onClick={() => onSort('DEC')}>by latest</Button>
       </ButtonGroup>

@@ -1,12 +1,22 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, TextField } from '@material-ui/core'
+import {
+  Button,
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 
 import { useAuth } from '../contexts/Auth'
 import { addTodo } from '../actions/todo-action'
 import { addTags } from '../actions/tag-action'
+
+import { newTodoStyles as useStyles } from '../styles/mui-theme'
 
 const NewTodo = () => {
   const [task, setTask] = useState('')
@@ -14,6 +24,7 @@ const NewTodo = () => {
   const [tags, setTags] = useState([]) // local tags for new todo
 
   const { uid } = useAuth()
+  const classes = useStyles()
   const dispatch = useDispatch()
   const remoteTags = useSelector((state) => state.remoteTags)
 
@@ -26,7 +37,6 @@ const NewTodo = () => {
         event.stopPropagation()
         if (event.target.value.length > 0) {
           setTags([...tags, event.target.value])
-          console.log('new tag list on key down', tags)
         }
         break
       }
@@ -66,18 +76,6 @@ const NewTodo = () => {
     }
     const date = e.target.elements[1].value
 
-    // add tags, replaced with autoComplete and keydown to add new tags
-    // let tags = []
-    // if (taskText.includes('#')) {
-    //   const re = /^#\w+$/
-    //   tags = taskText.split(' ').filter((w) => w.match(re))
-    //   tags = tags.map((tag) => tag.replace('#', ''))
-    //   taskText = taskText
-    //     .split(' ')
-    //     .filter((w) => !w.startsWith('#'))
-    //     .join(' ')
-    // }
-
     // structure new todo item
     const newTodo = {
       id: `todo_${Date.now()}`,
@@ -95,73 +93,76 @@ const NewTodo = () => {
     dispatch(addTodo(uid, listName, newTodo))
   }
 
-  const style = {
-    padding: '1em 1em',
-    margin: '0 2em',
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  }
-
   return (
-    <div className='new-task' style={{ border: '1px solid #3F51B5' }}>
-      <form style={style} onSubmit={onSubmit}>
-        <TextField
-          id='standard-basic'
-          label='New Todo'
-          required
-          onChange={onTask}
-          value={task}
-          error={error}
-          helperText={error ? 'Use space between each words' : ''}
-          style={{ width: '100%' }}
-          placeholder="e.g. '@list task' to create or add to a list"
-        />
-
-        <TextField
-          id='datetime-local'
-          label='Set Date'
-          type='date'
-          style={{ width: '25%' }}
-          defaultValue={new Date().toLocaleDateString('en-CA')}
-          InputLabelProps={{
-            shrink: true
-          }}
-        />
-        <Autocomplete
-          multiple
-          freeSolo
-          style={{ width: '60%' }}
-          id='tags-outlined'
-          options={remoteTags}
-          getOptionLabel={(option) => option}
-          value={tags}
-          onChange={(e, newValue) => setTags(newValue)}
-          filterSelectedOptions
-          renderInput={(params) => {
-            params.inputProps.onKeyDown = handleKeyDown
-            return (
-              <TextField
-                {...params}
-                variant='outlined'
-                label='Add Tags to Todo'
-                placeholder='Press either space, enter or comma to separate tags'
-                margin='normal'
-              />
-            )
-          }}
-        />
-        <Button
-          variant='outlined'
-          color='primary'
-          type='submit'
-          disabled={!task || error}
-          style={{ width: '10%' }}
+    <div className={classes.container}>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls='panel1a-content'
+          id='panel1a-header'
         >
-          Add
-        </Button>
-      </form>
+          <Typography variant='h6'>New Todo</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <form className={classes.form} onSubmit={onSubmit}>
+            <TextField
+              id='standard-basic'
+              label='Task'
+              required
+              onChange={onTask}
+              value={task}
+              error={error}
+              helperText={error ? 'Use space between each words' : ''}
+              fullWidth
+              placeholder="'@list task' to target a list"
+            />
+            <Autocomplete
+              multiple
+              freeSolo
+              fullWidth
+              id='tags-autocomplete'
+              options={remoteTags}
+              getOptionLabel={(option) => option}
+              value={tags}
+              onChange={(e, newValue) => setTags(newValue)}
+              filterSelectedOptions
+              renderInput={(params) => {
+                params.inputProps.onKeyDown = handleKeyDown
+                return (
+                  <TextField
+                    {...params}
+                    variant='standard'
+                    margin='dense'
+                    label='Tags'
+                    placeholder='Space or , to separate tags'
+                  />
+                )
+              }}
+            />
+            <TextField
+              id='datetime-local'
+              label='Set Date'
+              type='date'
+              fullWidth
+              margin='dense'
+              defaultValue={new Date().toLocaleDateString('en-CA')}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+            <Button
+              variant='outlined'
+              color='secondary'
+              className={classes.addBtn}
+              type='submit'
+              disabled={!task || error}
+              fullWidth
+            >
+              Add
+            </Button>
+          </form>
+        </AccordionDetails>
+      </Accordion>
     </div>
   )
 }

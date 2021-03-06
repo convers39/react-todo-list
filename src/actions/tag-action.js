@@ -4,7 +4,8 @@ export const fetchTags = (uid) => {
   return (dispatch, getState) => {
     db.ref(`all_tags/${uid}`).on('value', (tags) => {
       console.log('fetch remote tags', tags.val())
-      dispatch({ type: 'FETCH_TAGS', payload: { remoteTags: tags.val() } })
+      if (tags.val())
+        dispatch({ type: 'FETCH_TAGS', payload: { remoteTags: tags.val() } })
     })
   }
 }

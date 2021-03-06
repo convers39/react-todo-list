@@ -18,7 +18,7 @@ const listsReducer = (state = {}, action) => {
       const { newList, listName } = payload
       return { ...lists, [listName]: newList }
     case DELETE_TODO:
-      return { ...payload.newAllLists }
+      return payload.newAllLists
     case SORT_TODO:
       return {
         ...lists,

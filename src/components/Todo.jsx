@@ -6,7 +6,8 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
-  IconButton
+  IconButton,
+  Paper
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useDispatch } from 'react-redux'
@@ -14,12 +15,14 @@ import { useDispatch } from 'react-redux'
 import { db } from '../firebase/config'
 import { useAuth } from '../contexts/Auth'
 import { deleteTodo } from '../actions/todo-action'
+import { todoStyles as useStyles } from '../styles/mui-theme'
 
 const Todo = ({ todo, index, listName }) => {
   const { id, task, created, date } = todo
   const { uid } = useAuth()
   const [finished, setFinished] = useState('')
   const dispatch = useDispatch()
+  const classes = useStyles()
 
   const baseUrl = `all_lists/${uid}/${listName}/todos/${index}`
   useEffect(() => {
@@ -48,56 +51,60 @@ const Todo = ({ todo, index, listName }) => {
       {(provided, snapshot) => {
         return (
           <div
-            className='todo-item'
+            className={classes.container}
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             style={{
               userSelect: 'none',
-              padding: '.4em',
-              margin: '.8em .4em',
-              borderRadius: '5px',
-              backgroundColor: snapshot.isDragging ? '#9fc4eee' : '#8794b8',
               ...provided.draggableProps.style
             }}
           >
-            <ListItem
-              role={undefined}
-              dense
-              button
-              ContainerComponent='div'
-              onClick={toggleTodo}
+            <Paper
+              elevation={1}
+              style={{
+                opacity: snapshot.isDragging ? 0.9 : 1
+              }}
             >
-              <ListItemIcon>
-                <Checkbox
-                  edge='start'
-                  color='primary'
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': id }}
-                  checked={!!finished}
+              <ListItem
+                role={undefined}
+                dense
+                button
+                ContainerComponent='div'
+                onClick={toggleTodo}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    edge='start'
+                    color='secondary'
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{ 'aria-labelledby': id }}
+                    checked={!!finished}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  id={id}
+                  primary={`${task} on ${date}`}
+                  secondary={`created at ${created}`}
+                  style={{
+                    // textTransform: "capitalize",
+                    textDecoration: finished ? 'line-through' : 'none'
+                  }}
                 />
-              </ListItemIcon>
-              <ListItemText
-                id={id}
-                primary={`${task} on ${date}`}
-                secondary={`created at ${created}`}
-                style={{
-                  // textTransform: "capitalize",
-                  textDecoration: finished ? 'line-through' : 'none'
-                }}
-              />
 
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge='end'
-                  aria-label='delete'
-                  onClick={() => onDelete(listName, id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge='end'
+                    aria-label='delete'
+                    color='secondary'
+                    onClick={() => onDelete(listName, id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </Paper>
           </div>
         )
       }}

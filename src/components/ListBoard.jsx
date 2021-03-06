@@ -5,6 +5,7 @@ import { Typography } from '@material-ui/core'
 
 import { useAuth } from '../contexts/Auth'
 import { fetchLists, moveTodo } from '../actions/todo-action'
+import { listBoardStyles as useStyles } from '../styles/mui-theme'
 
 import List from './List'
 import NewTodo from './NewTodo'
@@ -12,7 +13,7 @@ import Tags from './Tags'
 
 const ListBoard = () => {
   const { uid } = useAuth()
-
+  const classes = useStyles()
   const dispatch = useDispatch()
   const lists = useSelector((state) => state.allLists)
 
@@ -30,24 +31,13 @@ const ListBoard = () => {
     return <List listName={listName} key={listName} todos={todos} />
   }
 
-  const style = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    backgroundColor: '#eee',
-    border: '1px solid #3F51B5',
-    height: '100%',
-    padding: '2em',
-    marginBottom: '3em'
-  }
-
   console.log('lists in board', lists)
 
   return (
-    <div>
+    <div className={classes.container}>
       <NewTodo />
       <Tags />
-      <div className='list-board' style={style}>
+      <div className={classes.board}>
         {Object.keys(lists).length ? (
           <DragDropContext onDragEnd={onDragEnd}>
             {Object.entries(lists).map(
@@ -56,7 +46,7 @@ const ListBoard = () => {
             )}
           </DragDropContext>
         ) : (
-          <Typography variant='h3' align='center'>
+          <Typography variant='h5' align='center'>
             Loading todos...
           </Typography>
         )}
