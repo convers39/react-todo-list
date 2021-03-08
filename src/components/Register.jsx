@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Redirect, Link as RouterLink, useHistory } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import {
   TextField,
   Card,
@@ -22,8 +22,6 @@ const Register = () => {
     mode: 'onBlur'
   })
   const [authError, setAuthError] = useState('')
-  // const password = useRef({})
-  // password.current = watch('password', '')
 
   const handleSignUp = (data) => {
     console.log('sign up data', data)
@@ -45,10 +43,12 @@ const Register = () => {
     clearErrors(name)
   }
 
-  if (currentUser) {
-    return <Redirect to='/' />
-  }
-  console.log('errors', errors)
+  useEffect(() => {
+    if (currentUser) {
+      return <Redirect to='/' />
+    }
+  })
+
   return (
     <div className='login'>
       <form

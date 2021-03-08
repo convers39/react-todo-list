@@ -19,9 +19,7 @@ const Header = () => {
   const classes = useStyles()
   const history = useHistory()
 
-  const handleLogOut = async (e) => {
-    e.preventDefault()
-    console.log('handleLogOut')
+  const handleLogOut = async () => {
     try {
       await logOut()
       history.push('/login')

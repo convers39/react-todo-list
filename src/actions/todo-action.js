@@ -1,21 +1,11 @@
 import { db } from '../firebase/config'
 
 export const fetchLists = (uid) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     db.ref(`all_lists/${uid}`).on('value', (snapshot) => {
       console.log('snapshot remote lists', snapshot.val())
-      if (snapshot.val())
-        dispatch({ type: 'FETCH_LISTS', payload: { allLists: snapshot.val() } })
-    })
-    // allLists = await (await db.ref(`all_lists/${uid}`).get()).val();
-  }
-}
-
-export const fetchDeleted = (uid) => {
-  return (dispatch, getState) => {
-    // api call
-    db.ref(`all_lists/${uid}/deleted`).on('value', (snapshot) => {
-      dispatch({ type: 'FETCH_DELETED', payload: '' })
+      const allLists = snapshot.val() || {}
+      dispatch({ type: 'FETCH_LISTS', payload: { allLists } })
     })
   }
 }
@@ -24,20 +14,14 @@ export const addTodo = (uid, listName, newTodo) => {
   return async (dispatch, getState) => {
     const lists = getState().allLists
     // check if the input list name exist, set its todos to empty array if not
-
-    console.log('new todo', newTodo)
     const currentList = lists[listName]
-    let todos =
-      currentList && Object.keys(currentList) && currentList.todos
-        ? currentList.todos
-        : []
+    let todos = currentList?.todos ? currentList.todos : []
 
     // clear empty items in todos, which will lead to error when write the DB
     todos = todos.filter(Boolean)
 
     // set a new list with input list name and todos, then update remove and local
     const newList = { name: listName, todos: [newTodo, ...todos] }
-    console.log('newlist', newList)
     await db
       .ref(`all_lists/${uid}/${listName}`)
       .set(newList)
@@ -49,14 +33,14 @@ export const addTodo = (uid, listName, newTodo) => {
 }
 
 export const deleteTodo = (uid, listName, todoId) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     const lists = getState().allLists
     const deleted = lists.deleted
     const baseUrl = `all_lists/${uid}/${listName}/todos`
     const deletedUrl = `all_lists/${uid}/deleted/todos`
+
     console.log('lists in delete', lists)
     const todos = [...lists[listName].todos]
-    // let deleted = await (await db.ref(`${deletedUrl}`).get()).val();
 
     // check if deleted todos exist, if not set to empty array
     const deletedTodos =
@@ -75,11 +59,11 @@ export const deleteTodo = (uid, listName, todoId) => {
 
     // set new deleted todo list to local and remote
     const deletedList = { name: 'deleted', todos: deletedTodos }
-    db.ref(`${deletedUrl}`).set(deletedList).catch(console.error)
+    await db.ref(`${deletedUrl}`).set(deletedList).catch(console.error)
     // db.ref(`${deletedUrl}`).push(removed).catch(console.error)
 
     // set updated list to remote
-    db.ref(`${baseUrl}`).set(todos).catch(console.error)
+    await db.ref(`${baseUrl}`).set(todos).catch(console.error)
 
     // in case the original list is empty after deletion
     const copy = {}
@@ -87,16 +71,15 @@ export const deleteTodo = (uid, listName, todoId) => {
       if (k !== listName) copy[k] = v
     }
     // update local lists, empty todo list will lead to error on dnd-beautiful
-    const newAllLists =
-      todos && todos.length
-        ? {
-            ...lists,
-            [listName]: {
-              name: listName,
-              todos: todos
-            }
+    const newAllLists = todos?.length
+      ? {
+          ...lists,
+          [listName]: {
+            name: listName,
+            todos: todos
           }
-        : { ...copy }
+        }
+      : { ...copy }
 
     dispatch({ type: 'DELETE_TODO', payload: { newAllLists } })
   }
@@ -127,9 +110,8 @@ export const sortTodo = (uid, sorting, listName) => {
 }
 
 export const filterTags = (tagList, initials) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     // when tag list is empty, set to initial lists
-    console.log('taglist', tagList)
     if (!tagList.length) {
       dispatch({
         type: 'FILTER_TODO',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Redirect, Link as RouterLink, useHistory } from 'react-router-dom'
 import {
   TextField,
@@ -66,10 +66,11 @@ const Login = () => {
       })
   }
 
-  // const { state } = useLocation()
-  if (currentUser) {
-    return <Redirect to='/' />
-  }
+  useEffect(() => {
+    if (currentUser) {
+      return <Redirect to='/' />
+    }
+  }, [currentUser])
   return (
     <div className='login'>
       <form

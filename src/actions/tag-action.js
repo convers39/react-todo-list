@@ -1,11 +1,11 @@
 import { db } from '../firebase/config'
 
 export const fetchTags = (uid) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     db.ref(`all_tags/${uid}`).on('value', (tags) => {
       console.log('fetch remote tags', tags.val())
-      if (tags.val())
-        dispatch({ type: 'FETCH_TAGS', payload: { remoteTags: tags.val() } })
+      const remoteTags = tags.val() || []
+      dispatch({ type: 'FETCH_TAGS', payload: { remoteTags } })
     })
   }
 }
