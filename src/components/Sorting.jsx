@@ -1,26 +1,34 @@
-import React from "react";
-import { Button, ButtonGroup } from "@material-ui/core";
-import SortIcon from "@material-ui/icons/Sort";
+import React from 'react'
+import { Button, ButtonGroup } from '@material-ui/core'
+import SortIcon from '@material-ui/icons/Sort'
+import { useDispatch } from 'react-redux'
+import { useAuth } from '../contexts/Auth'
+import { sortTodo } from '../actions/todo-action'
 
-const Sorting = ({ sort, listName }) => {
-	const style = {
-		display: "flex",
-		justifyContent: "space-around",
-		alignItems: "center",
-		margin: "0.5em 0",
-	};
+const Sorting = ({ listName }) => {
+  const style = {
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    margin: '0.5rem 0'
+  }
 
-	return (
-		<div style={style}>
-			<SortIcon />
-			<ButtonGroup variant="contained" color="primary">
-				<Button onClick={() => sort("ASC", listName)}>
-					by created
-				</Button>
-				<Button onClick={() => sort("DEC", listName)}>by latest</Button>
-			</ButtonGroup>
-		</div>
-	);
-};
+  const { uid } = useAuth()
+  const dispatch = useDispatch()
 
-export default Sorting;
+  const onSort = (sorting) => {
+    dispatch(sortTodo(uid, sorting, listName))
+  }
+
+  return (
+    <div style={style}>
+      <SortIcon />
+      <ButtonGroup variant='outlined' color='secondary'>
+        <Button onClick={() => onSort('ASC')}>by created</Button>
+        <Button onClick={() => onSort('DEC')}>by latest</Button>
+      </ButtonGroup>
+    </div>
+  )
+}
+
+export default Sorting

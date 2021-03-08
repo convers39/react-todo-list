@@ -1,49 +1,62 @@
-import React, { useContext } from "react";
-import { Redirect } from "react-router-dom";
-import { firebaseAuth } from "../firebase/config";
-import { AuthContext } from "./Auth";
-import { Button } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import React from 'react'
+import { Link as RouterLink, useHistory, Redirect } from 'react-router-dom'
+
+import {
+  Button,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton
+} from '@material-ui/core'
+import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import { headerStyles as useStyles } from '../styles/mui-theme'
+
+import { useAuth } from '../contexts/Auth'
 
 const Header = () => {
-	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { currentUser, logOut } = useAuth()
+  const classes = useStyles()
+  const history = useHistory()
 
-	const handleLogOut = (e) => {
-		e.preventDefault();
-		firebaseAuth
-			.signOut()
-			.then(() => setIsLoggedIn(false))
-			.catch(console.error);
-	};
+  const handleLogOut = async () => {
+    try {
+      await logOut()
+      history.push('/login')
+    } catch {
+      console.log('Failed to log out')
+    }
+  }
 
-	const style = { display: "flex", justifyContent: "space-between" };
+  return (
+    <header className={classes.header}>
+      <AppBar position='static'>
+        <Toolbar className={classes.toolbar}>
+          {currentUser ? (
+            <Button
+              className={classes.accountBtn}
+              component={RouterLink}
+              to='/profile'
+            >
+              <AccountBoxIcon className={classes.icons} />
+            </Button>
+          ) : (
+            <p></p>
+          )}
+          <Typography variant='h5' align='center'>
+            Todo List
+          </Typography>
+          {currentUser ? (
+            <Button className={classes.logoutBtn} onClick={handleLogOut}>
+              <ExitToAppIcon className={classes.icons} />
+            </Button>
+          ) : (
+            <p></p>
+          )}
+        </Toolbar>
+      </AppBar>
+    </header>
+  )
+}
 
-	return (
-		<header className="header">
-			<AppBar position="static">
-				<Toolbar style={style}>
-					<IconButton edge="start" color="inherit" aria-label="menu">
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6">Todo List</Typography>
-					<div>
-						{isLoggedIn ? (
-							<Button onClick={handleLogOut}>
-								<ExitToAppIcon style={{ color: "white" }} />
-							</Button>
-						) : (
-							<Redirect to="/login" />
-						)}
-					</div>
-				</Toolbar>
-			</AppBar>
-		</header>
-	);
-};
-
-export default Header;
+export default Header

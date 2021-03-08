@@ -1,8 +1,10 @@
-import { combineReducers } from "redux";
-import listBoardReducer from "./list-reducer";
-import todoReducer from "./todo-reducer";
+import { combineReducers } from 'redux'
+import listsReducer from './lists-reducer'
+import tagsReducer from './tags-reducer'
+import deletedReducer from './deleted-reducer'
 
 export default combineReducers({
-	listBoardReducer,
-	todoReducer,
-});
+  allLists: listsReducer,
+  remoteTags: tagsReducer,
+  deletedTodos: deletedReducer
+})

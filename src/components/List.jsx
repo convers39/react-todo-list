@@ -1,70 +1,71 @@
-import React from "react";
-import { Droppable } from "react-beautiful-dnd";
-import { Typography } from "@material-ui/core";
+import React from 'react'
+import { Droppable } from 'react-beautiful-dnd'
+import {
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import Todo from "./Todo";
-import Sorting from "./Sorting";
+import Todo from './Todo'
+import Sorting from './Sorting'
 
-const List = ({ listName, todos, sort, onDelete }) => {
-	const renderTodo = (todo, index) => {
-		return (
-			<Todo
-				key={todo.id}
-				index={index}
-				todo={todo}
-				onDelete={onDelete}
-				listName={listName}
-			/>
-		);
-	};
+import { listStyles as useStyles } from '../styles/mui-theme'
 
-	const style = {
-		padding: "1em",
-		backgroundColor: "lightgrey",
-		borderRadius: "5px",
-		margin: "1em 0",
-		width: "400px",
-	};
+const List = ({ listName, todos, sort }) => {
+  const classes = useStyles()
 
-	return (
-		<div style={style}>
-			<Typography variant="h5" align="center">
-				@{listName}
-			</Typography>
-			<Sorting sort={sort} listName={listName} />
-			<div className="list-container">
-				{todos.length ? (
-					<Droppable droppableId={listName}>
-						{(provided, snapshot) => {
-							return (
-								<div
-									ref={provided.innerRef}
-									{...provided.droppableProps}
-									style={{
-										background: snapshot.isDraggingOver
-											? "#6a80aa"
-											: "#50658d",
-										padding: ".5em",
-										borderRadius: "5px",
-										// minHeight: 400,
-									}}
-								>
-									{todos.map((todo, index) =>
-										renderTodo(todo, index),
-									)}
-									{provided.placeholder}
-								</div>
-							);
-						}}
-					</Droppable>
-				) : (
-					<Typography variant="h4" align="center">
-						No todos
-					</Typography>
-				)}
-			</div>
-		</div>
-	);
-};
+  const renderTodo = (todo, index) => {
+    return <Todo key={todo.id} index={index} todo={todo} listName={listName} />
+  }
 
-export default List;
+  return (
+    <div className={classes.container}>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls='panel1a-content'
+          id='panel1a-header'
+        >
+          <Typography variant='h6' align='center'>
+            @{listName}({todos.length})
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div>
+            <Sorting sort={sort} listName={listName} />
+            <div className='list-container'>
+              {
+                <Droppable droppableId={listName}>
+                  {(provided, snapshot) => {
+                    return (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={{
+                          opacity: snapshot.isDraggingOver ? 0.9 : 1
+                        }}
+                      >
+                        {todos?.length ? (
+                          todos.map((todo, index) => renderTodo(todo, index))
+                        ) : (
+                          <Typography variant='h4' align='center'>
+                            No todos
+                          </Typography>
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )
+                  }}
+                </Droppable>
+              }
+            </div>
+          </div>
+        </AccordionDetails>
+      </Accordion>
+    </div>
+  )
+}
+
+export default List

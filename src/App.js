@@ -1,40 +1,37 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { CssBaseline, Container } from "@material-ui/core";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { CssBaseline, Container } from '@material-ui/core'
+import { ThemeProvider } from '@material-ui/styles'
+import ListBoard from './components/ListBoard'
+import Header from './components/Header'
+import Register from './components/Register'
+import Login from './components/Login'
+import Profile from './components/Profile'
+import { theme } from './styles/mui-theme'
 
-import "./App.scss";
-import ListBoard from "./components/ListBoard";
-import Header from "./components/Header";
-import Register from "./components/Register";
-import Login from "./components/Login";
-
-import { AuthProvider } from "./components/Auth";
+import { AuthProvider } from './contexts/Auth'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
-	return (
-		<div className="App">
-			<CssBaseline />
-			<Container maxWidth="md">
-				{/* <Typography
-					component="div"
-					style={{ backgroundColor: "#cfe8fc", height: "100vh" }}
-				/> */}
-				<AuthProvider>
-					<Router>
-						<Header />
-						<Switch>
-							<Route exact path="/" component={ListBoard} />
-							<Route exact path="/login" component={Login} />
-							<Route
-								exact
-								path="/register"
-								component={Register}
-							/>
-						</Switch>
-					</Router>
-				</AuthProvider>
-			</Container>
-		</div>
-	);
+  return (
+    <div className='App'>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AuthProvider>
+            <Header />
+            <Container maxWidth='xs'>
+              <Switch>
+                <PrivateRoute exact path='/' component={ListBoard} />
+                <PrivateRoute path='/profile' component={Profile} />
+                <Route path='/login' component={Login} />
+                <Route path='/register' component={Register} />
+              </Switch>
+            </Container>
+          </AuthProvider>
+        </Router>
+      </ThemeProvider>
+    </div>
+  )
 }
 
-export default App;
+export default App
